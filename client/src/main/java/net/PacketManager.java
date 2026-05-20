@@ -1,5 +1,6 @@
 package net;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import data.XMLWorker;
 
 import java.io.IOException;
@@ -20,6 +21,14 @@ public class PacketManager {
     private DatagramSocket socket;
 
     public Response send(Request request, InetSocketAddress address) throws IOException {
+        ArrayList<DatagramPacket> packets = disassemble(request, address);
+
+        HashSet<Integer> toAsk = IntStream.range(0, packets.size()).boxed().collect(Collectors.toCollection(HashSet::new));
+
+        return new Response(0, "Text...");
+    }
+
+    private ArrayList<DatagramPacket> disassemble(Request request, InetSocketAddress address) throws JsonProcessingException {
         byte[] buffer = XMLWorker.serialize(request).getBytes(StandardCharsets.UTF_8);
 
         int numberOfPackets = (int) Math.ceil((double) buffer.length / BUFFER_SIZE);
@@ -55,9 +64,7 @@ public class PacketManager {
             packets.add(packet);
         }
 
-        HashSet<Integer> toAsk = IntStream.range(0, numberOfPackets).boxed().collect(Collectors.toCollection(HashSet::new));
-
-        return new Response(0, "Text...");
+        return packets;
     }
 
     public void setSocket(DatagramSocket socket) {
