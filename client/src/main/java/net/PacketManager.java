@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -22,16 +24,29 @@ public class PacketManager {
 
         ArrayList<DatagramPacket> packets = new ArrayList<>();
 
+        UUID uuid = UUID.randomUUID();
+
+        ByteBuffer headerBuffer = ByteBuffer.allocate(20);
+
+        headerBuffer.putLong(uuid.getMostSignificantBits());
+        headerBuffer.putLong(uuid.getLeastSignificantBits());
+
+        headerBuffer.putInt(numberOfPackets);
+
+        byte[] header = headerBuffer.array();
+
         for (int i = 0; i < numberOfPackets; i++) {
             int payloadSize = Math.min(buffer.length - BUFFER_SIZE * i, BUFFER_SIZE);
 
-            byte[] sBuffer = new byte[2 + payloadSize];
+            ByteBuffer packetBuffer = ByteBuffer.allocate(24 + payloadSize);
 
-            sBuffer[0] = (byte) numberOfPackets;
+            packetBuffer.put(header);
 
-            sBuffer[1] = (byte) i;
+            packetBuffer.putInt(i);
 
-            System.arraycopy(buffer, BUFFER_SIZE * i, sBuffer, 2, payloadSize);
+            packetBuffer.put(buffer, BUFFER_SIZE * i, payloadSize);
+
+            byte[] sBuffer = packetBuffer.array();
 
             DatagramPacket packet = new DatagramPacket(sBuffer, sBuffer.length, address);
 
