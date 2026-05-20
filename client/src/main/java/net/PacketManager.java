@@ -20,12 +20,12 @@ public class PacketManager {
 
     private DatagramSocket socket;
 
-    public Response send(Request request, InetSocketAddress address) throws IOException {
+    public Response get(Request request, InetSocketAddress address) throws IOException {
         ArrayList<DatagramPacket> packets = disassemble(request, address);
 
         HashSet<Integer> toAsk = IntStream.range(0, packets.size()).boxed().collect(Collectors.toCollection(HashSet::new));
 
-        return new Response(0, "Text...");
+        return new Response(1, "Text...");
     }
 
     private ArrayList<DatagramPacket> disassemble(Request request, InetSocketAddress address) throws JsonProcessingException {

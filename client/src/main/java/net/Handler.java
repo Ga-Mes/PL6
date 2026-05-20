@@ -33,7 +33,7 @@ public class Handler {
 
         try {
             while (true) {
-                Response response = manager.send(request, address);
+                Response response = manager.get(request, address);
 
                 if (response.status() == 0) {
                     DragonTemplate template = DragonCreator.create(terminal);
