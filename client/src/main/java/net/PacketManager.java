@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -22,14 +21,14 @@ public class PacketManager {
     private DatagramSocket socket;
 
     public Response get(Request request, InetSocketAddress address) throws IOException {
-        ArrayList<DatagramPacket> packets = disassemble(request, address);
+        send(request, address);
 
-        deliver(packets);
+
 
         return new Response(1, "Text...");
     }
 
-    private ArrayList<DatagramPacket> disassemble(Request request, InetSocketAddress address) throws JsonProcessingException {
+    private void send(Request request, InetSocketAddress address) throws IOException {
         byte[] buffer = XMLWorker.serialize(request).getBytes(StandardCharsets.UTF_8);
 
         int numberOfPackets = (int) Math.ceil((double) buffer.length / BUFFER_SIZE);
@@ -67,10 +66,10 @@ public class PacketManager {
             packets.add(packet);
         }
 
-        return packets;
+        deliver(packets, uuid);
     }
 
-    private void deliver(ArrayList<DatagramPacket> packets) throws IOException {
+    private void deliver(ArrayList<DatagramPacket> packets, UUID uuid) throws IOException {
         HashSet<Integer> toResend = IntStream.range(0, packets.size()).boxed().collect(Collectors.toCollection(HashSet::new));
 
         socket.setSoTimeout(4);
