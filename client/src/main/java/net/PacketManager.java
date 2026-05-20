@@ -9,7 +9,6 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -69,18 +68,7 @@ public class PacketManager {
     }
 
     private void deliver(ArrayList<DatagramPacket> packets, UUID uuid, InetSocketAddress address) throws IOException {
-        HashSet<Integer> toResend = IntStream.range(0, packets.size()).boxed().collect(Collectors.toCollection(HashSet::new));
-
-        ByteBuffer askBuffer = ByteBuffer.allocate(20);
-
-        askBuffer.putLong(uuid.getMostSignificantBits());
-        askBuffer.putLong(uuid.getLeastSignificantBits());
-
-        askBuffer.putInt(1);
-
-        byte[] ask = askBuffer.array();
-
-        DatagramPacket askPacket = new DatagramPacket(ask, ask.length, address);
+        ArrayList<Integer> toResend = IntStream.range(0, packets.size()).boxed().collect(Collectors.toCollection(ArrayList::new));
 
         socket.setSoTimeout(4);
 
@@ -89,7 +77,35 @@ public class PacketManager {
                 socket.send(packets.get(i));
             }
 
+            ByteBuffer askBuffer = ByteBuffer.allocate(24);
+
+            askBuffer.putInt(1);
+
+            askBuffer.putLong(uuid.getMostSignificantBits());
+            askBuffer.putLong(uuid.getLeastSignificantBits());
+
+            askBuffer.putInt(toResend.get(0));
+
+            byte[] ask = askBuffer.array();
+
+            DatagramPacket askPacket = new DatagramPacket(ask, ask.length, address);
+
             socket.send(askPacket);
+
+            byte[] temporaryBuffer = new byte[128];
+
+            DatagramPacket temporaryPacket = new DatagramPacket(temporaryBuffer, temporaryBuffer.length);
+
+            ByteBuffer echoBuffer = ByteBuffer.wrap(temporaryPacket.getData(), 0, temporaryPacket.getLength());
+
+            echoBuffer.getInt();
+
+            echoBuffer.getLong();
+            echoBuffer.getLong();
+
+            int ix = echoBuffer.getInt();
+
+            toResend.remove(ix);
         }
     }
 
