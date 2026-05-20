@@ -32,7 +32,7 @@ public class Handler {
             while (true) {
                 Response response = manager.send(XMLWorker.serialize(request));
 
-
+                return response.status() + " - " + response.text();
             }
         } catch (JsonProcessingException e) {
             return "Error while serialization, try again...";
