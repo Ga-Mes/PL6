@@ -23,7 +23,7 @@ public class PacketManager {
     public Response get(Request request, InetSocketAddress address) throws IOException {
         ArrayList<DatagramPacket> packets = disassemble(request, address);
 
-        HashSet<Integer> toAsk = IntStream.range(0, packets.size()).boxed().collect(Collectors.toCollection(HashSet::new));
+        deliver(packets);
 
         return new Response(1, "Text...");
     }
@@ -65,6 +65,10 @@ public class PacketManager {
         }
 
         return packets;
+    }
+
+    private void deliver(ArrayList<DatagramPacket> packets) {
+
     }
 
     public void setSocket(DatagramSocket socket) {
