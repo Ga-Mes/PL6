@@ -29,10 +29,10 @@ public class Handler {
         }
 
         try {
-            String serialized = XMLWorker.serialize(request);
-
             while (true) {
-                manager.send(serialized);
+                Response response = manager.send(XMLWorker.serialize(request));
+
+
             }
         } catch (JsonProcessingException e) {
             return "Error while serialization, try again...";

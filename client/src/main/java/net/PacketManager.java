@@ -10,7 +10,7 @@ public class PacketManager {
 
     private DatagramSocket socket;
 
-    public void send(String serialized) throws IOException {
+    public Response send(String serialized) throws IOException {
         byte[] buffer = serialized.getBytes(StandardCharsets.UTF_8);
 
         int numberOfPackets = (int) Math.ceil((double) buffer.length / BUFFER_SIZE);
@@ -28,6 +28,8 @@ public class PacketManager {
 
             socket.send(packet);
         }
+
+        return new Response(0, "Text...");
     }
 
     public void setSocket(DatagramSocket socket) {
