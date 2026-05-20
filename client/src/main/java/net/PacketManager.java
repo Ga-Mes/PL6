@@ -38,7 +38,9 @@ public class PacketManager {
 
         UUID uuid = UUID.randomUUID();
 
-        ByteBuffer headerBuffer = ByteBuffer.allocate(20);
+        ByteBuffer headerBuffer = ByteBuffer.allocate(24);
+
+        headerBuffer.putInt(0);
 
         headerBuffer.putLong(uuid.getMostSignificantBits());
         headerBuffer.putLong(uuid.getLeastSignificantBits());
@@ -50,7 +52,7 @@ public class PacketManager {
         for (int i = 0; i < numberOfPackets; i++) {
             int payloadSize = Math.min(buffer.length - BUFFER_SIZE * i, BUFFER_SIZE);
 
-            ByteBuffer packetBuffer = ByteBuffer.allocate(24 + payloadSize);
+            ByteBuffer packetBuffer = ByteBuffer.allocate(28 + payloadSize);
 
             packetBuffer.put(header);
 
