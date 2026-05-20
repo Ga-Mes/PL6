@@ -3,6 +3,7 @@ package net;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 
 public class PacketManager {
@@ -10,7 +11,7 @@ public class PacketManager {
 
     private DatagramSocket socket;
 
-    public Response send(String serialized) throws IOException {
+    public Response send(String serialized, InetSocketAddress address) throws IOException {
         byte[] buffer = serialized.getBytes(StandardCharsets.UTF_8);
 
         int numberOfPackets = (int) Math.ceil((double) buffer.length / BUFFER_SIZE);
@@ -24,7 +25,7 @@ public class PacketManager {
 
             System.arraycopy(buffer, BUFFER_SIZE * i, sBuffer, 2, Math.min(buffer.length, BUFFER_SIZE));
 
-            DatagramPacket packet = new DatagramPacket(sBuffer, sBuffer.length);
+            DatagramPacket packet = new DatagramPacket(sBuffer, sBuffer.length, address);
 
             socket.send(packet);
         }

@@ -30,7 +30,7 @@ public class Handler {
 
         try {
             while (true) {
-                Response response = manager.send(XMLWorker.serialize(request));
+                Response response = manager.send(XMLWorker.serialize(request), address);
 
                 return response.status() + " - " + response.text();
             }
