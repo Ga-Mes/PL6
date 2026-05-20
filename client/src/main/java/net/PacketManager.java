@@ -1,6 +1,5 @@
 package net;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import data.XMLWorker;
 
 import java.io.IOException;
@@ -66,11 +65,22 @@ public class PacketManager {
             packets.add(packet);
         }
 
-        deliver(packets, uuid);
+        deliver(packets, uuid, address);
     }
 
-    private void deliver(ArrayList<DatagramPacket> packets, UUID uuid) throws IOException {
+    private void deliver(ArrayList<DatagramPacket> packets, UUID uuid, InetSocketAddress address) throws IOException {
         HashSet<Integer> toResend = IntStream.range(0, packets.size()).boxed().collect(Collectors.toCollection(HashSet::new));
+
+        ByteBuffer askBuffer = ByteBuffer.allocate(20);
+
+        askBuffer.putLong(uuid.getMostSignificantBits());
+        askBuffer.putLong(uuid.getLeastSignificantBits());
+
+        askBuffer.putInt(1);
+
+        byte[] ask = askBuffer.array();
+
+        DatagramPacket askPacket = new DatagramPacket(ask, ask.length, address);
 
         socket.setSoTimeout(4);
 
@@ -78,6 +88,8 @@ public class PacketManager {
             for (Integer i : toResend) {
                 socket.send(packets.get(i));
             }
+
+            socket.send(askPacket);
         }
     }
 
