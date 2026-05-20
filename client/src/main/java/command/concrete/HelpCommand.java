@@ -13,7 +13,7 @@ public class HelpCommand extends AbstractCommand {
     public void execute(boolean[] statuses, Handler handler, ArrayList<Object> args, Terminal terminal) {
         Request request = new Request(CommandType.HELP, new ArrayList<>());
 
-        String response = handler.process(request);
+        String response = handler.process(request, terminal);
 
         System.out.println(response);
     }

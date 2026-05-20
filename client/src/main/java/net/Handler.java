@@ -1,10 +1,14 @@
 package net;
 
+import base.DragonCreator;
+import base.DragonTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import data.XMLWorker;
+import org.jline.terminal.Terminal;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Handler {
     private InetSocketAddress address = null;
@@ -23,7 +27,7 @@ public class Handler {
         }
     }
 
-    public String process(Request request) {
+    public String process(Request request, Terminal terminal) {
         if ((address == null) || (manager.getSocket() == null)) {
             return "Try setting port with command \"port\" before executing server commands...";
         }
@@ -32,7 +36,17 @@ public class Handler {
             while (true) {
                 Response response = manager.send(XMLWorker.serialize(request), address);
 
-                return response.status() + " - " + response.text();
+                if (response.status() == 0) {
+                    DragonTemplate template = DragonCreator.create(terminal);
+
+                    ArrayList<Object> args = new ArrayList<>();
+
+                    args.add(template);
+
+                    request = new Request(request.type(), args);
+                } else {
+                    return response.status() + " - " + response.text();
+                }
             }
         } catch (JsonProcessingException e) {
             return "Error while serialization, try again...";
