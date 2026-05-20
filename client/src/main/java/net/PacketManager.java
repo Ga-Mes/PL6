@@ -1,5 +1,7 @@
 package net;
 
+import data.XMLWorker;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -17,8 +19,8 @@ public class PacketManager {
 
     private DatagramSocket socket;
 
-    public Response send(String serialized, InetSocketAddress address) throws IOException {
-        byte[] buffer = serialized.getBytes(StandardCharsets.UTF_8);
+    public Response send(Request request, InetSocketAddress address) throws IOException {
+        byte[] buffer = XMLWorker.serialize(request).getBytes(StandardCharsets.UTF_8);
 
         int numberOfPackets = (int) Math.ceil((double) buffer.length / BUFFER_SIZE);
 

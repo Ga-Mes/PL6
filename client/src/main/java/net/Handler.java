@@ -3,7 +3,6 @@ package net;
 import base.DragonCreator;
 import base.DragonTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import data.XMLWorker;
 import org.jline.terminal.Terminal;
 
 import java.io.IOException;
@@ -34,7 +33,7 @@ public class Handler {
 
         try {
             while (true) {
-                Response response = manager.send(XMLWorker.serialize(request), address);
+                Response response = manager.send(request, address);
 
                 if (response.status() == 0) {
                     DragonTemplate template = DragonCreator.create(terminal);
