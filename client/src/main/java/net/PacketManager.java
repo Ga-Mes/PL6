@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -67,8 +68,16 @@ public class PacketManager {
         return packets;
     }
 
-    private void deliver(ArrayList<DatagramPacket> packets) {
+    private void deliver(ArrayList<DatagramPacket> packets) throws IOException {
+        HashSet<Integer> toResend = IntStream.range(0, packets.size()).boxed().collect(Collectors.toCollection(HashSet::new));
 
+        socket.setSoTimeout(4);
+
+        while (!toResend.isEmpty()) {
+            for (Integer i : toResend) {
+                socket.send(packets.get(i));
+            }
+        }
     }
 
     public void setSocket(DatagramSocket socket) {
