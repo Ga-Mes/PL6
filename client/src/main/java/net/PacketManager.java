@@ -28,6 +28,8 @@ public class PacketManager {
         address = new InetSocketAddress(InetAddress.getByName("helios"), port);
 
         this.socket = new DatagramSocket();
+
+        this.socket.setSoTimeout(8);
     }
 
     public boolean isAvailable() {
