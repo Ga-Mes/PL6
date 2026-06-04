@@ -6,7 +6,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 public class XMLWorker {
     private static final XmlMapper mapper = new XmlMapper();
 
-    public static String serialize(Object Args) throws JsonProcessingException {
-        return mapper.writeValueAsString(Args);
+    public static String serialize(Object object) throws JsonProcessingException {
+        return mapper.writeValueAsString(object);
     }
 }
