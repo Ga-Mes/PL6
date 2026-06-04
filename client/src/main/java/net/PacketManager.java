@@ -2,14 +2,12 @@ package net;
 
 import data.XMLWorker;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class PacketManager {
     private InetSocketAddress address = null;
@@ -21,7 +19,7 @@ public class PacketManager {
     public Response get(Request request) throws IOException {
         send(request);
 
-        return new Response(1, "Text...");
+        return receive();
     }
 
     private void send(Request request) throws IOException {
@@ -79,6 +77,68 @@ public class PacketManager {
 
             packets.remove(index);
         }
+    }
+
+    private Response receive() throws IOException {
+        TreeMap<Integer, byte[]> packets = new TreeMap<>();
+
+        int numberOfPackets = -1;
+
+        while ((packets.isEmpty()) || (numberOfPackets != packets.size())) {
+            byte[] temporaryBuffer = new byte[BUFFER_SIZE * 2];
+
+            DatagramPacket packet = new DatagramPacket(temporaryBuffer, temporaryBuffer.length);
+
+            socket.receive(packet);
+
+            ByteBuffer buffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
+
+            UUID uuid = new UUID(buffer.getLong(), buffer.getLong());
+
+            numberOfPackets = buffer.getInt();
+
+            buffer.getInt();
+
+            int index = buffer.getInt();
+
+            byte[] payload = new byte[buffer.remaining()];
+
+            buffer.get(payload);
+
+            packets.put(index, payload);
+
+            buffer = ByteBuffer.allocate(Long.BYTES * 2 + Integer.BYTES * 3 + BUFFER_SIZE);
+
+            buffer.putLong(uuid.getMostSignificantBits());
+            buffer.putLong(uuid.getLeastSignificantBits());
+            buffer.putInt(numberOfPackets);
+            buffer.putInt(1);
+            buffer.putInt(index);
+
+            int size = buffer.position();
+
+            byte[] data = Arrays.copyOf(buffer.array(), size);
+
+            DatagramPacket temporaryPacket = new DatagramPacket(
+                    data,
+                    data.length,
+                    address
+            );
+
+            socket.send(temporaryPacket);
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        packets.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(e -> {
+            try {
+                out.write(e.getValue());
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        return XMLWorker.parse(out.toString(StandardCharsets.UTF_8), Response.class);
     }
 
     public void setNet(int port) throws UnknownHostException, SocketException {
