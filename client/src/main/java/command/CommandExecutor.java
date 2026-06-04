@@ -2,6 +2,7 @@ package command;
 
 import command.concrete.ExitCommand;
 import command.concrete.HelpCommand;
+import command.concrete.InsertCommand;
 import command.concrete.PortCommand;
 import language.Lexer;
 import net.Handler;
@@ -36,6 +37,7 @@ public class CommandExecutor {
             case EXIT -> new ExitCommand().execute(statuses, handler, compiled, terminal);
             case PORT -> new PortCommand().execute(statuses, handler, compiled, terminal);
             case HELP -> new HelpCommand().execute(statuses, handler, compiled, terminal);
+            case INSERT -> new InsertCommand().execute(statuses, handler, compiled, terminal);
         }
     }
 }

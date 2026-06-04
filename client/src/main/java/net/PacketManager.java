@@ -25,7 +25,7 @@ public class PacketManager {
     }
 
     public void setNet(int port) throws UnknownHostException, SocketException {
-        address = new InetSocketAddress(InetAddress.getByName("helios"), port);
+        address = new InetSocketAddress(InetAddress.getByName("127.0.0.1"), port);
 
         this.socket = new DatagramSocket();
 

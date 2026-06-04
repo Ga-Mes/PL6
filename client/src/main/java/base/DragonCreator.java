@@ -156,8 +156,8 @@ public class DragonCreator {
         return new DragonTemplate(coordinates, color, dragonCharacter, dragonCave);
     }
 
-    public static boolean check(ArrayList<Object> primitives) {
-        String name = (String) primitives.get(0);
+    public static boolean check(ArrayList<Object> primitives, int i) {
+        String name = (String) primitives.get(i++);
 
         if (name.isBlank()) {
             System.out.println("Name cannot be blank...");
@@ -165,7 +165,7 @@ public class DragonCreator {
             return false;
         }
 
-        Integer age = (Integer) primitives.get(1);
+        Integer age = (Integer) primitives.get(i);
 
         if (age < 1) {
             System.out.println("Age must be more than 0...");
