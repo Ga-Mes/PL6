@@ -1,6 +1,5 @@
 package net;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import data.XMLWorker;
 
 import java.io.IOException;
