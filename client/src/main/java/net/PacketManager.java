@@ -1,119 +1,26 @@
 package net;
 
-import data.XMLWorker;
-
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.net.*;
 
 public class PacketManager {
+    private InetSocketAddress address = null;
+
     private final int BUFFER_SIZE = 1400;
 
     private DatagramSocket socket;
 
-    public Response get(Request request, InetSocketAddress address) throws IOException {
-        send(request, address);
-
-
-
+    public Response get(Request request) throws IOException {
         return new Response(1, "Text...");
     }
 
-    private void send(Request request, InetSocketAddress address) throws IOException {
-        byte[] buffer = XMLWorker.serialize(request).getBytes(StandardCharsets.UTF_8);
+    public void setNet(int port) throws UnknownHostException, SocketException {
+        address = new InetSocketAddress(InetAddress.getByName("helios"), port);
 
-        int numberOfPackets = (int) Math.ceil((double) buffer.length / BUFFER_SIZE);
-
-        ArrayList<DatagramPacket> packets = new ArrayList<>();
-
-        UUID uuid = UUID.randomUUID();
-
-        ByteBuffer headerBuffer = ByteBuffer.allocate(24);
-
-        headerBuffer.putInt(0);
-
-        headerBuffer.putLong(uuid.getMostSignificantBits());
-        headerBuffer.putLong(uuid.getLeastSignificantBits());
-
-        headerBuffer.putInt(numberOfPackets);
-
-        byte[] header = headerBuffer.array();
-
-        for (int i = 0; i < numberOfPackets; i++) {
-            int payloadSize = Math.min(buffer.length - BUFFER_SIZE * i, BUFFER_SIZE);
-
-            ByteBuffer packetBuffer = ByteBuffer.allocate(28 + payloadSize);
-
-            packetBuffer.put(header);
-
-            packetBuffer.putInt(i);
-
-            packetBuffer.put(buffer, BUFFER_SIZE * i, payloadSize);
-
-            byte[] sBuffer = packetBuffer.array();
-
-            DatagramPacket packet = new DatagramPacket(sBuffer, sBuffer.length, address);
-
-            packets.add(packet);
-        }
-
-        deliver(packets, uuid, address);
+        this.socket = new DatagramSocket();
     }
 
-    private void deliver(ArrayList<DatagramPacket> packets, UUID uuid, InetSocketAddress address) throws IOException {
-        ArrayList<Integer> toResend = IntStream.range(0, packets.size()).boxed().collect(Collectors.toCollection(ArrayList::new));
-
-        socket.setSoTimeout(4);
-
-        while (!toResend.isEmpty()) {
-            for (Integer i : toResend) {
-                socket.send(packets.get(i));
-            }
-
-            ByteBuffer askBuffer = ByteBuffer.allocate(24);
-
-            askBuffer.putInt(1);
-
-            askBuffer.putLong(uuid.getMostSignificantBits());
-            askBuffer.putLong(uuid.getLeastSignificantBits());
-
-            askBuffer.putInt(toResend.get(0));
-
-            byte[] ask = askBuffer.array();
-
-            DatagramPacket askPacket = new DatagramPacket(ask, ask.length, address);
-
-            socket.send(askPacket);
-
-            byte[] temporaryBuffer = new byte[128];
-
-            DatagramPacket temporaryPacket = new DatagramPacket(temporaryBuffer, temporaryBuffer.length);
-
-            ByteBuffer echoBuffer = ByteBuffer.wrap(temporaryPacket.getData(), 0, temporaryPacket.getLength());
-
-            echoBuffer.getInt();
-
-            echoBuffer.getLong();
-            echoBuffer.getLong();
-
-            int ix = echoBuffer.getInt();
-
-            toResend.remove(ix);
-        }
-    }
-
-    public void setSocket(DatagramSocket socket) {
-        this.socket = socket;
-    }
-
-    public DatagramSocket getSocket() {
-        return socket;
+    public boolean isAvailable() {
+        return (address != null) && (socket != null);
     }
 }

@@ -10,15 +10,11 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class Handler {
-    private InetSocketAddress address = null;
-
     private final PacketManager manager = new PacketManager();
 
     public void setPort(int port) {
         try {
-            address = new InetSocketAddress(InetAddress.getByName("helios"), port);
-
-            manager.setSocket(new DatagramSocket());
+            manager.setNet(port);
         } catch (UnknownHostException e) {
             System.out.println("Couldn't resolve hostname...");
         } catch (SocketException e) {
@@ -27,13 +23,13 @@ public class Handler {
     }
 
     public String process(Request request, Terminal terminal) {
-        if ((address == null) || (manager.getSocket() == null)) {
+        if (!manager.isAvailable()) {
             return "Try setting port with command \"port\" before executing server commands...";
         }
 
         try {
             while (true) {
-                Response response = manager.get(request, address);
+                Response response = manager.get(request);
 
                 if (response.status() == 0) {
                     DragonTemplate template = DragonCreator.create(terminal);
