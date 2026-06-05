@@ -12,6 +12,6 @@ public class ExitCommand extends AbstractCommand {
     public void execute(boolean[] statuses, Handler handler, ArrayList<Object> args, Terminal terminal, Logger logger) {
         statuses[0] = false;
 
-        System.out.println("Finishing work...");
+        logger.info("Finishing work...");
     }
 }

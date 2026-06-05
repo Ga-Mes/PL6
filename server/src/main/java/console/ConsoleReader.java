@@ -80,10 +80,18 @@ public class ConsoleReader {
                     System.out.print("\r\033[K> " + line);
                 }
             } catch (IOException e) {
-                System.out.println("\nAborting app due to console exception...");
+                logger.error("\nAborting app due to console exception...");
 
                 statuses[0] = false;
             }
+        }
+
+        ILoggingEvent event;
+
+        while ((event = LogBuffer.getQueue().poll()) != null) {
+            System.out.println("\r\033[K" + renderMessage(event));
+
+            lastRender = ".";
         }
     }
 
