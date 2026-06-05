@@ -4,7 +4,6 @@ import command.concrete.ExitCommand;
 import command.concrete.SaveCommand;
 import data.CollectionManager;
 import language.Lexer;
-import net.Handler;
 import org.jline.terminal.Terminal;
 import org.slf4j.Logger;
 
@@ -12,8 +11,6 @@ import java.util.ArrayList;
 
 public class CommandExecutor {
     private final boolean[] statuses;
-
-    private final Handler handler = new Handler();
 
     private final Terminal terminal;
 
@@ -41,8 +38,8 @@ public class CommandExecutor {
         compiled.remove(0);
 
         switch (type) {
-            case EXIT -> new ExitCommand().execute(statuses, handler, compiled, terminal, logger, collectionManager);
-            case SAVE -> new SaveCommand().execute(statuses, handler, compiled, terminal, logger, collectionManager);
+            case EXIT -> new ExitCommand().execute(statuses, compiled, terminal, logger, collectionManager);
+            case SAVE -> new SaveCommand().execute(statuses, compiled, terminal, logger, collectionManager);
         }
     }
 
