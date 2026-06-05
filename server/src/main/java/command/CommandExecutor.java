@@ -2,6 +2,7 @@ package command;
 
 import command.concrete.ExitCommand;
 import command.concrete.SaveCommand;
+import data.CollectionManager;
 import language.Lexer;
 import net.Handler;
 import org.jline.terminal.Terminal;
@@ -18,10 +19,14 @@ public class CommandExecutor {
 
     private final Logger logger;
 
+    private final CollectionManager collectionManager;
+
     public CommandExecutor(boolean[] statuses, Terminal terminal, Logger logger) {
         this.statuses = statuses;
         this.terminal = terminal;
         this.logger = logger;
+
+        collectionManager = new CollectionManager(logger);
     }
 
     public void execute(String input) {
@@ -36,8 +41,8 @@ public class CommandExecutor {
         compiled.remove(0);
 
         switch (type) {
-            case EXIT -> new ExitCommand().execute(statuses, handler, compiled, terminal, logger);
-            case SAVE -> new SaveCommand().execute(statuses, handler, compiled, terminal, logger);
+            case EXIT -> new ExitCommand().execute(statuses, handler, compiled, terminal, logger, collectionManager);
+            case SAVE -> new SaveCommand().execute(statuses, handler, compiled, terminal, logger, collectionManager);
         }
     }
 
