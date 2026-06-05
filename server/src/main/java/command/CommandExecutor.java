@@ -4,6 +4,7 @@ import command.concrete.ExitCommand;
 import command.concrete.SaveCommand;
 import data.CollectionManager;
 import language.Lexer;
+import net.Handler;
 import org.jline.terminal.Terminal;
 import org.slf4j.Logger;
 
@@ -16,12 +17,20 @@ public class CommandExecutor {
 
     private final Logger logger;
 
+    private final Handler handler;
+
     private final CollectionManager collectionManager;
 
-    public CommandExecutor(boolean[] statuses, Terminal terminal, Logger logger) {
+    public CommandExecutor(boolean[] statuses, Terminal terminal, Logger logger) throws Exception {
         this.statuses = statuses;
         this.terminal = terminal;
         this.logger = logger;
+
+        handler = new Handler(logger);
+
+        if (!handler.bind()) {
+            throw new Exception();
+        }
 
         collectionManager = new CollectionManager(logger);
     }

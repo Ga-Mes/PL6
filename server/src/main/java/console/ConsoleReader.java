@@ -27,7 +27,7 @@ public class ConsoleReader {
 
     private final Logger logger = LoggerFactory.getLogger(ConsoleReader.class);
 
-    public ConsoleReader() throws IOException {
+    public ConsoleReader() throws Exception {
         terminal = TerminalBuilder.builder().system(true).jna(true).jansi(true).build();
 
         terminal.enterRawMode();
@@ -87,17 +87,9 @@ public class ConsoleReader {
                 statuses[0] = false;
             }
         }
-
-        ILoggingEvent event;
-
-        while ((event = LogBuffer.getQueue().poll()) != null) {
-            System.out.println("\r\033[K" + renderMessage(event));
-
-            lastRender = ".";
-        }
     }
 
-    private String renderMessage(ILoggingEvent event) {
+    public static String renderMessage(ILoggingEvent event) {
         String dateTime = Instant.ofEpochMilli(event.getTimeStamp()).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         return "[" + dateTime + " / " + event.getLevel() + "] " + event.getFormattedMessage();
