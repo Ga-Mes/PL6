@@ -79,6 +79,8 @@ public class ConsoleReader {
 
                     System.out.print("\r\033[K> " + line);
                 }
+
+                executor.tick();
             } catch (IOException e) {
                 logger.error("\nAborting app due to console exception...");
 

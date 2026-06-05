@@ -40,4 +40,8 @@ public class CommandExecutor {
             case SAVE -> new SaveCommand().execute(statuses, handler, compiled, terminal, logger);
         }
     }
+
+    public void tick() {
+        // TODO: handle net
+    }
 }
