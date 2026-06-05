@@ -1,0 +1,10 @@
+<configuration>
+
+    <appender name="CUSTOM"
+              class="console.CustomAppender" />
+
+    <root level="INFO">
+        <appender-ref ref="CUSTOM" />
+    </root>
+
+</configuration>
