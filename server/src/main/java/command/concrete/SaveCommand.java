@@ -7,11 +7,9 @@ import org.slf4j.Logger;
 
 import java.util.ArrayList;
 
-public class ExitCommand extends AbstractCommand {
+public class SaveCommand extends AbstractCommand {
     @Override
     public void execute(boolean[] statuses, Handler handler, ArrayList<Object> args, Terminal terminal, Logger logger) {
-        statuses[0] = false;
-
-        System.out.println("Finishing work...");
+        logger.info("Saving...");
     }
 }

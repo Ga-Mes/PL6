@@ -1,6 +1,7 @@
 package command;
 
 import command.concrete.ExitCommand;
+import command.concrete.SaveCommand;
 import language.Lexer;
 import net.Handler;
 import org.jline.terminal.Terminal;
@@ -35,8 +36,8 @@ public class CommandExecutor {
         compiled.remove(0);
 
         switch (type) {
-            case EXIT -> new ExitCommand().execute(statuses, handler, compiled, terminal);
-            case SAVE -> logger.info("Saving...");
+            case EXIT -> new ExitCommand().execute(statuses, handler, compiled, terminal, logger);
+            case SAVE -> new SaveCommand().execute(statuses, handler, compiled, terminal, logger);
         }
     }
 }
