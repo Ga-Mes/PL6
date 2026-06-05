@@ -32,7 +32,7 @@ public class ConsoleReader {
 
         terminal.enterRawMode();
 
-        executor = new CommandExecutor(statuses, terminal);
+        executor = new CommandExecutor(statuses, terminal, logger);
 
         logger.info("Starting...");
     }

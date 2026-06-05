@@ -1,10 +1,12 @@
 package language;
 
 import command.CommandType;
+import org.slf4j.Logger;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 public class Lexer {
     private static final Map<CommandType, Type[]> defaultArgs = Map.ofEntries(
@@ -23,10 +25,15 @@ public class Lexer {
             Map.entry(CommandType.FILTER_CONTAINS_DESCRIPTION, new Type[]{String.class}),
             Map.entry(CommandType.FILTER_GREATER_THAN_AGE, new Type[]{Integer.class}),
             Map.entry(CommandType.PRINT_UNIQUE_COLOR, new Type[]{}),
-            Map.entry(CommandType.PORT, new Type[]{Integer.class})
+            Map.entry(CommandType.SAVE, new Type[]{})
     );
 
-    private static ArrayList<String> split(String text) {
+    private static final Set<CommandType> serverCommands = Set.of(
+            CommandType.EXIT,
+            CommandType.SAVE
+    );
+
+    private static ArrayList<String> split(String text, Logger logger) {
         text = " " + text + " ";
 
         ArrayList<Integer> qI = new ArrayList<>();
@@ -45,7 +52,7 @@ public class Lexer {
         }
 
         if (!qI.isEmpty()) {
-            System.out.println("Wrong quotation in line...");
+            logger.error("Wrong quotation in line...");
 
             return null;
         }
@@ -82,8 +89,8 @@ public class Lexer {
         return tokens;
     }
 
-    public static ArrayList<Object> compile(String input) {
-        ArrayList<String> tokens = split(input);
+    public static ArrayList<Object> compile(String input, Logger logger) {
+        ArrayList<String> tokens = split(input, logger);
 
         if (tokens == null) {
             return null;
@@ -92,10 +99,16 @@ public class Lexer {
         try {
             CommandType commandType = CommandType.valueOf(tokens.get(0).toUpperCase());
 
+            if (!serverCommands.contains(commandType)) {
+                logger.error("Unavailable command name...");
+
+                return null;
+            }
+
             tokens.remove(0);
 
             if (defaultArgs.get(commandType).length != tokens.size()) {
-                System.out.println("Wrong number of arguments: expected " + defaultArgs.get(commandType).length + ", but " + tokens.size() + " given...");
+                logger.error("Wrong number of arguments: expected {}, but {} given...", defaultArgs.get(commandType).length, tokens.size());
 
                 return null;
             }
@@ -113,7 +126,7 @@ public class Lexer {
                     try {
                         arg = Integer.parseInt(tokens.get(i));
                     } catch (NumberFormatException e) {
-                        System.out.println(tokens.get(i) + " <- argument has wrong type. Expected integer...");
+                        logger.error("{} <- argument has wrong type. Expected integer...", tokens.get(i));
 
                         return null;
                     }
@@ -124,7 +137,7 @@ public class Lexer {
 
             return result;
         } catch (IllegalArgumentException e) {
-            System.out.println("Wrong command name...");
+            logger.error("Wrong command name...");
 
             return null;
         }

@@ -1,12 +1,10 @@
 package command;
 
 import command.concrete.ExitCommand;
-import command.concrete.HelpCommand;
-import command.concrete.InsertCommand;
-import command.concrete.PortCommand;
 import language.Lexer;
 import net.Handler;
 import org.jline.terminal.Terminal;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 
@@ -17,13 +15,16 @@ public class CommandExecutor {
 
     private final Terminal terminal;
 
-    public CommandExecutor(boolean[] statuses, Terminal terminal) {
+    private final Logger logger;
+
+    public CommandExecutor(boolean[] statuses, Terminal terminal, Logger logger) {
         this.statuses = statuses;
         this.terminal = terminal;
+        this.logger = logger;
     }
 
     public void execute(String input) {
-        ArrayList<Object> compiled = Lexer.compile(input);
+        ArrayList<Object> compiled = Lexer.compile(input, logger);
 
         if (compiled == null) {
             return;
@@ -35,9 +36,7 @@ public class CommandExecutor {
 
         switch (type) {
             case EXIT -> new ExitCommand().execute(statuses, handler, compiled, terminal);
-            case PORT -> new PortCommand().execute(statuses, handler, compiled, terminal);
-            case HELP -> new HelpCommand().execute(statuses, handler, compiled, terminal);
-            case INSERT -> new InsertCommand().execute(statuses, handler, compiled, terminal);
+            case SAVE -> logger.info("Saving...");
         }
     }
 }
