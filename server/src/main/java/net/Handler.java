@@ -3,7 +3,6 @@ package net;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.DatagramChannel;
@@ -22,6 +21,14 @@ public class Handler {
             channel = DatagramChannel.open();
         } catch (IOException e) {
             logger.error("Couldn't open a channel...");
+
+            return false;
+        }
+
+        try {
+            channel.configureBlocking(false);
+        } catch (IOException e) {
+            logger.error("Couldn't configure the channel...");
 
             return false;
         }
