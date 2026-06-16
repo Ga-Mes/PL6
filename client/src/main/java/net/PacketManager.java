@@ -178,7 +178,7 @@ public class PacketManager {
 
         this.socket = new DatagramSocket();
 
-        this.socket.setSoTimeout(2000);
+        this.socket.setSoTimeout(1000);
     }
 
     public boolean isAvailable() {
