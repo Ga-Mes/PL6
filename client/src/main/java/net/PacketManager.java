@@ -19,7 +19,7 @@ public class PacketManager {
     public Response get(Request request, UUID uuid) throws IOException {
         send(request, uuid);
 
-        return receive();
+        return receive(uuid);
     }
 
     private void send(Request request, UUID uuid) throws IOException {
@@ -77,6 +77,8 @@ public class PacketManager {
                     int index = buffer.getInt();
 
                     packets.remove(index);
+
+                    if (packets.isEmpty()) break;
                 }
             } catch (IOException ignored) {}
 
@@ -86,64 +88,89 @@ public class PacketManager {
         if (!packets.isEmpty()) throw new IOException();
     }
 
-    private Response receive() throws IOException {
+    private Response receive(UUID uuid) throws IOException {
         TreeMap<Integer, byte[]> packets = new TreeMap<>();
 
         int numberOfPackets = -1;
 
-        while ((packets.isEmpty()) || (numberOfPackets != packets.size())) {
-            DatagramPacket packet = new DatagramPacket(new byte[BUFFER_SIZE * 2], BUFFER_SIZE * 2);
+        while (packets.isEmpty() || packets.size() != numberOfPackets) {
+            try {
+                while (true) {
+                    DatagramPacket packet =
+                            new DatagramPacket(new byte[BUFFER_SIZE * 2], BUFFER_SIZE * 2);
 
-            socket.receive(packet);
+                    socket.receive(packet);
 
-            ByteBuffer buffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
+                    ByteBuffer buffer =
+                            ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
 
-            UUID uuid = new UUID(buffer.getLong(), buffer.getLong());
+                    if (!new UUID(buffer.getLong(), buffer.getLong()).equals(uuid)) {
+                        continue;
+                    }
 
-            numberOfPackets = buffer.getInt();
+                    int numOfPackets = buffer.getInt();
 
-            buffer.getInt();
+                    if (numberOfPackets == -1) {
+                        numberOfPackets = numOfPackets;
+                    } else if (numberOfPackets != numOfPackets) {
+                        continue;
+                    }
 
-            int index = buffer.getInt();
+                    if (buffer.getInt() != 0) {
+                        continue;
+                    }
 
-            byte[] payload = new byte[buffer.remaining()];
+                    int index = buffer.getInt();
 
-            buffer.get(payload);
+                    byte[] payload = new byte[buffer.remaining()];
+                    buffer.get(payload);
 
-            packets.put(index, payload);
+                    packets.put(index, payload);
 
-            buffer = ByteBuffer.allocate(Long.BYTES * 2 + Integer.BYTES * 3 + BUFFER_SIZE);
+                    if (packets.size() == numberOfPackets) {
+                        break;
+                    }
+                }
+            } catch (IOException ignored) {
+            }
 
-            buffer.putLong(uuid.getMostSignificantBits());
-            buffer.putLong(uuid.getLeastSignificantBits());
-            buffer.putInt(numberOfPackets);
-            buffer.putInt(1);
-            buffer.putInt(index);
+            if (numberOfPackets <= 0) {
+                continue;
+            }
 
-            int size = buffer.position();
+            for (int i = 0; i < numberOfPackets; i++) {
+                if (!packets.containsKey(i)) {
+                    ByteBuffer buffer = ByteBuffer.allocate(
+                            Long.BYTES * 2 + Integer.BYTES * 3
+                    );
 
-            byte[] data = Arrays.copyOf(buffer.array(), size);
+                    buffer.putLong(uuid.getMostSignificantBits());
+                    buffer.putLong(uuid.getLeastSignificantBits());
+                    buffer.putInt(numberOfPackets);
+                    buffer.putInt(1);
+                    buffer.putInt(i);
 
-            DatagramPacket temporaryPacket = new DatagramPacket(
-                    data,
-                    data.length,
-                    address
-            );
+                    DatagramPacket request = new DatagramPacket(
+                            buffer.array(),
+                            buffer.position(),
+                            address
+                    );
 
-            socket.send(temporaryPacket);
+                    socket.send(request);
+                }
+            }
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        packets.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(e -> {
-            try {
-                out.write(e.getValue());
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+        for (byte[] data : packets.values()) {
+            out.write(data);
+        }
 
-        return XMLWorker.parse(out.toString(StandardCharsets.UTF_8), Response.class);
+        return XMLWorker.parse(
+                out.toString(StandardCharsets.UTF_8),
+                Response.class
+        );
     }
 
     public void setNet(int port) throws UnknownHostException, SocketException {
