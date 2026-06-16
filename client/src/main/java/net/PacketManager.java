@@ -68,10 +68,11 @@ public class PacketManager {
 
                     ByteBuffer buffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
 
-                    buffer.getLong();
-                    buffer.getLong();
-                    buffer.getInt();
-                    buffer.getInt();
+                    if (!new UUID(buffer.getLong(), buffer.getLong()).equals(uuid)) continue;
+
+                    if (buffer.getInt() != numberOfPackets) continue;
+
+                    if (buffer.getInt() != 1) continue;
 
                     int index = buffer.getInt();
 
@@ -89,9 +90,7 @@ public class PacketManager {
         int numberOfPackets = -1;
 
         while ((packets.isEmpty()) || (numberOfPackets != packets.size())) {
-            byte[] temporaryBuffer = new byte[BUFFER_SIZE * 2];
-
-            DatagramPacket packet = new DatagramPacket(temporaryBuffer, temporaryBuffer.length);
+            DatagramPacket packet = new DatagramPacket(new byte[BUFFER_SIZE * 2], BUFFER_SIZE * 2);
 
             socket.receive(packet);
 
