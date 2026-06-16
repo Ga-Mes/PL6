@@ -8,6 +8,7 @@ import org.jline.terminal.Terminal;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Handler {
     private final PacketManager manager = new PacketManager();
@@ -28,8 +29,10 @@ public class Handler {
         }
 
         try {
+            UUID uuid = UUID.randomUUID();
+
             while (true) {
-                Response response = manager.get(request);
+                Response response = manager.get(request, uuid);
 
                 if (response.status() == 0) {
                     DragonTemplate template = DragonCreator.create(terminal);

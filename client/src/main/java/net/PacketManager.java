@@ -16,18 +16,16 @@ public class PacketManager {
 
     private DatagramSocket socket;
 
-    public Response get(Request request) throws IOException {
-        send(request);
+    public Response get(Request request, UUID uuid) throws IOException {
+        send(request, uuid);
 
         return receive();
     }
 
-    private void send(Request request) throws IOException {
+    private void send(Request request, UUID uuid) throws IOException {
         byte[] serialized = XMLWorker.serialize(request).getBytes(StandardCharsets.UTF_8);
 
         int numberOfPackets = (int) Math.ceil((double) serialized.length / BUFFER_SIZE);
-
-        UUID uuid = UUID.randomUUID();
 
         Map<Integer, DatagramPacket> packets = new HashMap<>();
 
