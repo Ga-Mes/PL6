@@ -55,7 +55,7 @@ public class PacketManager {
 
         int retries = 8;
 
-        while (!packets.isEmpty() || (retries != 0)) {
+        while (!packets.isEmpty() && (retries != 0)) {
             for (Integer ix : packets.keySet()) {
                 socket.send(packets.get(ix));
             }
@@ -82,6 +82,8 @@ public class PacketManager {
 
             retries--;
         }
+
+        if (!packets.isEmpty()) throw new IOException();
     }
 
     private Response receive() throws IOException {
