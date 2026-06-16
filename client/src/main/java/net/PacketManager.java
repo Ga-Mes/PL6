@@ -53,27 +53,33 @@ public class PacketManager {
             packets.put(i, packet);
         }
 
-        while (!packets.isEmpty()) {
+        int retries = 8;
+
+        while (!packets.isEmpty() || (retries != 0)) {
             for (Integer ix : packets.keySet()) {
                 socket.send(packets.get(ix));
             }
 
-            byte[] temporaryBuffer = new byte[BUFFER_SIZE * 2];
+            try {
+                while (true) {
+                    DatagramPacket packet = new DatagramPacket(new byte[BUFFER_SIZE * 2], BUFFER_SIZE * 2);
 
-            DatagramPacket packet = new DatagramPacket(temporaryBuffer, temporaryBuffer.length);
+                    socket.receive(packet);
 
-            socket.receive(packet);
+                    ByteBuffer buffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
 
-            ByteBuffer buffer = ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
+                    buffer.getLong();
+                    buffer.getLong();
+                    buffer.getInt();
+                    buffer.getInt();
 
-            buffer.getLong();
-            buffer.getLong();
-            buffer.getInt();
-            buffer.getInt();
+                    int index = buffer.getInt();
 
-            int index = buffer.getInt();
+                    packets.remove(index);
+                }
+            } catch (IOException ignored) {}
 
-            packets.remove(index);
+            retries--;
         }
     }
 
