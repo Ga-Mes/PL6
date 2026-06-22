@@ -43,7 +43,7 @@ public class Handler {
 
                     request = new Request(request.type(), args);
                 } else {
-                    return response.status() + " - " + response.text();
+                    return response.text();
                 }
             }
         } catch (JsonProcessingException e) {
