@@ -107,6 +107,8 @@ public class Handler {
 
                     if (contexts.get(uuid).status == RequestStatus.FINISHED) {
                         contexts.remove(uuid);
+
+                        logger.info("Finished: {}", uuid);
                     }
                 }
 
@@ -132,7 +134,7 @@ public class Handler {
                         frameSizes.remove(uuid);
                         listeners.remove(uuid);
 
-                        logger.info("Finished: {}", uuid);
+                        logger.info("Processed: {}", uuid);
                     }
                 }
             }
