@@ -1,5 +1,6 @@
 package net;
 
+import com.fasterxml.jackson.core.JacksonException;
 import command.AbstractClientCommand;
 import command.client.HelpCommand;
 import data.CollectionManager;
@@ -13,10 +14,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 
 public class Handler {
     private DatagramChannel channel = null;
@@ -30,6 +28,12 @@ public class Handler {
     }
 
     private final Map<UUID, TreeMap<Integer, byte[]>> toAssemble = new HashMap<>();
+
+    private final Map<UUID, TreeMap<Integer, byte[]>> toSend = new HashMap<>();
+
+    private final Map<UUID, Integer> frameSizes = new HashMap<>();
+
+    private final Map<UUID, InetSocketAddress> listeners = new HashMap<>();
 
     private final Map<UUID, RequestContext> contexts = new HashMap<>();
 
@@ -51,7 +55,7 @@ public class Handler {
 
             int index = buffer.getInt();
 
-            logger.info("{} {} {} {}", uuid, numberOfPackets, type, index);
+            listeners.put(uuid, address);
 
             if (type == 0) {
                 toAssemble.putIfAbsent(uuid, new TreeMap<>());
@@ -95,11 +99,13 @@ public class Handler {
                         };
 
                         contexts.put(uuid, new RequestContext(command));
+
+                        logger.info("Started: {}", uuid);
                     }
 
                     Response response = contexts.get(uuid).handle(statuses, logger, collectionManager, request);
 
-                    logger.info(String.valueOf(response));
+                    prepare(response, uuid);
 
                     if (contexts.get(uuid).status == RequestStatus.FINISHED) {
                         contexts.remove(uuid);
@@ -114,11 +120,54 @@ public class Handler {
                 aBuffer.putInt(1);
                 aBuffer.putInt(index);
 
-                aBuffer.rewind();
+                aBuffer.flip();
 
                 channel.send(aBuffer, address);
+            } else if (type == 1) {
+                toSend.get(uuid).remove(index);
+
+                if (toSend.get(uuid).isEmpty()) {
+                    toSend.remove(uuid);
+
+                    frameSizes.remove(uuid);
+
+                    logger.info("Finished: {}", uuid);
+                }
             }
         } catch (IOException ignored) {}
+
+        for (UUID request : toSend.keySet()) {
+            try {
+                ByteBuffer sBuffer = ByteBuffer.allocate(Long.BYTES * 2 + Integer.BYTES * 3 + BUFFER_SIZE);
+
+                sBuffer.putLong(request.getMostSignificantBits());
+                sBuffer.putLong(request.getLeastSignificantBits());
+                sBuffer.putInt(frameSizes.get(request));
+                sBuffer.putInt(0);
+                sBuffer.putInt(toSend.get(request).firstEntry().getKey());
+                sBuffer.put(toSend.get(request).firstEntry().getValue());
+
+                sBuffer.flip();
+
+                channel.send(sBuffer, listeners.get(request));
+            } catch (IOException ignored) {}
+        }
+    }
+
+    private void prepare(Response response, UUID uuid) throws JacksonException {
+        toAssemble.remove(uuid);
+
+        toSend.put(uuid, new TreeMap<>());
+
+        byte[] serialized = XMLWorker.serialize(response).getBytes(StandardCharsets.UTF_8);
+
+        int numberOfPackets = (int) Math.ceil((double) serialized.length / BUFFER_SIZE);
+
+        frameSizes.put(uuid, numberOfPackets);
+
+        for (int i = 0; i < numberOfPackets; i++) {
+            toSend.get(uuid).put(i, Arrays.copyOfRange(serialized, i * BUFFER_SIZE, Math.min((i + 1) * BUFFER_SIZE, serialized.length)));
+        }
     }
 
     public boolean bind() {
