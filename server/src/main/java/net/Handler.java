@@ -2,9 +2,7 @@ package net;
 
 import com.fasterxml.jackson.core.JacksonException;
 import command.AbstractClientCommand;
-import command.client.HelpCommand;
-import command.client.InsertCommand;
-import command.client.ShowCommand;
+import command.client.*;
 import data.CollectionManager;
 import data.XMLWorker;
 import org.slf4j.Logger;
@@ -90,14 +88,14 @@ public class Handler {
                             case REMOVE_KEY -> null;
                             case CLEAR -> null;
                             case EXECUTE_SCRIPT -> null;
-                            case EXIT -> null;
+                            case EXIT -> new ExitCommand();
                             case REMOVE_GREATER -> null;
                             case REPLACE_IF_GREATER -> null;
                             case REMOVE_GREATER_KEY -> null;
                             case FILTER_CONTAINS_DESCRIPTION -> null;
                             case FILTER_GREATER_THAN_AGE -> null;
                             case PRINT_UNIQUE_COLOR -> null;
-                            case SAVE -> null;
+                            case SAVE -> new SaveCommand();
                         };
 
                         contexts.put(uuid, new RequestContext(command));
