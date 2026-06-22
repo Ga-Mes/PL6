@@ -2,7 +2,6 @@ package data;
 
 import base.Dragon;
 import base.DragonWrapper;
-import com.fasterxml.jackson.core.JacksonException;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -45,7 +44,21 @@ public class FileManager {
         return result;
     }
 
-    public void save() {
+    public void save(TreeMap<Integer, Dragon> dragons) {
         logger.info("Saving...");
+
+        DragonWrapper wrapper = new DragonWrapper(dragons);
+
+        if (Files.exists(path)) {
+            try {
+                String result = XMLWorker.serialize(wrapper);
+
+                Files.writeString(path, result);
+
+                return;
+            } catch (IOException ignored) {}
+        }
+
+        logger.error("Couldn't save collection to the file...");
     }
 }

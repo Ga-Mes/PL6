@@ -20,7 +20,7 @@ public class CollectionManager {
     }
 
     public void save() {
-        fileManager.save();
+        fileManager.save(dragons);
     }
 
     @Override
