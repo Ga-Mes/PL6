@@ -1,4 +1,4 @@
-package command.concrete;
+package command.server;
 
 import command.AbstractCommand;
 import data.CollectionManager;

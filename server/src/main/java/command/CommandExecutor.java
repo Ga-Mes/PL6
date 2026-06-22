@@ -1,7 +1,7 @@
 package command;
 
-import command.concrete.ExitCommand;
-import command.concrete.SaveCommand;
+import command.server.ExitCommand;
+import command.server.SaveCommand;
 import data.CollectionManager;
 import language.Lexer;
 import net.Handler;
