@@ -88,8 +88,7 @@ public class Handler {
                             case REMOVE_KEY -> new RemoveKeyCommand();
                             case CLEAR -> new ClearCommand();
                             case EXIT -> new ExitCommand();
-                            case REMOVE_GREATER -> null;
-                            case REPLACE_IF_GREATER -> null;
+                            case REMOVE_GREATER -> new RemoveGreaterCommand();
                             case REMOVE_GREATER_KEY -> null;
                             case FILTER_CONTAINS_DESCRIPTION -> new FilterContainsDescription();
                             case FILTER_GREATER_THAN_AGE -> new FilterGreaterThanAgeCommand();
