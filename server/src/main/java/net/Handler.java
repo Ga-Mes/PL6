@@ -85,7 +85,7 @@ public class Handler {
                             case SHOW -> new ShowCommand();
                             case INSERT -> new InsertCommand();
                             case UPDATE -> null;
-                            case REMOVE_KEY -> null;
+                            case REMOVE_KEY -> new RemoveKeyCommand();
                             case CLEAR -> new ClearCommand();
                             case EXECUTE_SCRIPT -> null;
                             case EXIT -> new ExitCommand();

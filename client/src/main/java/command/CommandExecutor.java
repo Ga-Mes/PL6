@@ -38,6 +38,7 @@ public class CommandExecutor {
             case SHOW -> new ShowCommand().execute(statuses, handler, compiled, terminal);
             case CLEAR -> new ClearCommand().execute(statuses, handler, compiled, terminal);
             case INFO -> new InfoCommand().execute(statuses, handler, compiled, terminal);
+            case REMOVE_KEY -> new RemoveKeyCommand().execute(statuses, handler, compiled, terminal);
         }
     }
 }
