@@ -11,6 +11,8 @@ public class ExitCommand extends AbstractCommand {
     public void execute(boolean[] statuses, ArrayList<Object> args, Logger logger, CollectionManager collectionManager) {
         statuses[0] = false;
 
+        collectionManager.save();
+
         logger.info("Finishing work...");
     }
 }
