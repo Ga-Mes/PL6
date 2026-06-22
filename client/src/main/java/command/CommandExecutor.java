@@ -44,6 +44,7 @@ public class CommandExecutor {
             case PRINT_UNIQUE_COLOR -> new PrintUniqueColorCommand().execute(statuses, handler, compiled, terminal);
             case UPDATE -> new UpdateCommand().execute(statuses, handler, compiled, terminal);
             case REMOVE_GREATER -> new RemoveGreaterCommand().execute(statuses, handler, compiled, terminal);
+            case REMOVE_GREATER_KEY -> new RemoveGreaterKeyCommand().execute(statuses, handler, compiled, terminal);
         }
     }
 }

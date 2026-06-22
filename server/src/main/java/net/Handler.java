@@ -89,7 +89,7 @@ public class Handler {
                             case CLEAR -> new ClearCommand();
                             case EXIT -> new ExitCommand();
                             case REMOVE_GREATER -> new RemoveGreaterCommand();
-                            case REMOVE_GREATER_KEY -> null;
+                            case REMOVE_GREATER_KEY -> new RemoveGreaterKeyCommand();
                             case FILTER_CONTAINS_DESCRIPTION -> new FilterContainsDescription();
                             case FILTER_GREATER_THAN_AGE -> new FilterGreaterThanAgeCommand();
                             case PRINT_UNIQUE_COLOR -> new PrintUniqueColorCommand();
