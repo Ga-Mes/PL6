@@ -39,6 +39,7 @@ public class CommandExecutor {
             case CLEAR -> new ClearCommand().execute(statuses, handler, compiled, terminal);
             case INFO -> new InfoCommand().execute(statuses, handler, compiled, terminal);
             case REMOVE_KEY -> new RemoveKeyCommand().execute(statuses, handler, compiled, terminal);
+            case FILTER_GREATER_THAN_AGE -> new FilterGreaterThanAgeCommand().execute(statuses, handler, compiled, terminal);
         }
     }
 }

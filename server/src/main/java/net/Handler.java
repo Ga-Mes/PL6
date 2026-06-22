@@ -93,7 +93,7 @@ public class Handler {
                             case REPLACE_IF_GREATER -> null;
                             case REMOVE_GREATER_KEY -> null;
                             case FILTER_CONTAINS_DESCRIPTION -> null;
-                            case FILTER_GREATER_THAN_AGE -> null;
+                            case FILTER_GREATER_THAN_AGE -> new FilterGreaterThanAgeCommand();
                             case PRINT_UNIQUE_COLOR -> null;
                             case SAVE -> new SaveCommand();
                         };
