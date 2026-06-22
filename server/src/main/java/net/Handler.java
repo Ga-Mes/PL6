@@ -122,32 +122,47 @@ public class Handler {
 
                 channel.send(aBuffer, address);
             } else if (type == 1) {
-                toSend.get(uuid).remove(index);
+                TreeMap<Integer, byte[]> packets = toSend.get(uuid);
 
-                if (toSend.get(uuid).isEmpty()) {
-                    toSend.remove(uuid);
+                if (packets != null) {
+                    packets.remove(index);
 
-                    frameSizes.remove(uuid);
+                    if (packets.isEmpty()) {
+                        toSend.remove(uuid);
+                        frameSizes.remove(uuid);
+                        listeners.remove(uuid);
 
-                    logger.info("Finished: {}", uuid);
+                        logger.info("Finished: {}", uuid);
+                    }
                 }
             }
         } catch (IOException ignored) {}
 
-        for (UUID request : toSend.keySet()) {
+        for (UUID request : new ArrayList<>(toSend.keySet())) {
             try {
-                ByteBuffer sBuffer = ByteBuffer.allocate(Long.BYTES * 2 + Integer.BYTES * 3 + BUFFER_SIZE);
+                for (Map.Entry<Integer, byte[]> entry :
+                        toSend.get(request).entrySet()) {
 
-                sBuffer.putLong(request.getMostSignificantBits());
-                sBuffer.putLong(request.getLeastSignificantBits());
-                sBuffer.putInt(frameSizes.get(request));
-                sBuffer.putInt(0);
-                sBuffer.putInt(toSend.get(request).firstEntry().getKey());
-                sBuffer.put(toSend.get(request).firstEntry().getValue());
+                    ByteBuffer sBuffer = ByteBuffer.allocate(
+                            Long.BYTES * 2 +
+                                    Integer.BYTES * 3 +
+                                    BUFFER_SIZE
+                    );
 
-                sBuffer.flip();
+                    sBuffer.putLong(request.getMostSignificantBits());
+                    sBuffer.putLong(request.getLeastSignificantBits());
+                    sBuffer.putInt(frameSizes.get(request));
+                    sBuffer.putInt(0);
+                    sBuffer.putInt(entry.getKey());
+                    sBuffer.put(entry.getValue());
 
-                channel.send(sBuffer, listeners.get(request));
+                    sBuffer.flip();
+
+                    channel.send(
+                            sBuffer,
+                            listeners.get(request)
+                    );
+                }
             } catch (IOException ignored) {}
         }
     }

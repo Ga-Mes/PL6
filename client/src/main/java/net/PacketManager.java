@@ -95,69 +95,60 @@ public class PacketManager {
 
         while (packets.isEmpty() || packets.size() != numberOfPackets) {
             try {
-                while (true) {
-                    DatagramPacket packet =
-                            new DatagramPacket(new byte[BUFFER_SIZE * 2], BUFFER_SIZE * 2);
+                DatagramPacket packet =
+                        new DatagramPacket(new byte[BUFFER_SIZE * 2], BUFFER_SIZE * 2);
 
-                    socket.receive(packet);
+                socket.receive(packet);
 
-                    ByteBuffer buffer =
-                            ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
+                ByteBuffer buffer =
+                        ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
 
-                    if (!new UUID(buffer.getLong(), buffer.getLong()).equals(uuid)) {
-                        continue;
-                    }
+                UUID packetUuid =
+                        new UUID(buffer.getLong(), buffer.getLong());
 
-                    int numOfPackets = buffer.getInt();
-
-                    if (numberOfPackets == -1) {
-                        numberOfPackets = numOfPackets;
-                    } else if (numberOfPackets != numOfPackets) {
-                        continue;
-                    }
-
-                    if (buffer.getInt() != 0) {
-                        continue;
-                    }
-
-                    int index = buffer.getInt();
-
-                    byte[] payload = new byte[buffer.remaining()];
-                    buffer.get(payload);
-
-                    packets.put(index, payload);
-
-                    if (packets.size() == numberOfPackets) {
-                        break;
-                    }
+                if (!packetUuid.equals(uuid)) {
+                    continue;
                 }
-            } catch (IOException ignored) {
-            }
 
-            if (numberOfPackets <= 0) {
-                continue;
-            }
+                int numOfPackets = buffer.getInt();
 
-            for (int i = 0; i < numberOfPackets; i++) {
-                if (!packets.containsKey(i)) {
-                    ByteBuffer buffer = ByteBuffer.allocate(
-                            Long.BYTES * 2 + Integer.BYTES * 3
-                    );
-
-                    buffer.putLong(uuid.getMostSignificantBits());
-                    buffer.putLong(uuid.getLeastSignificantBits());
-                    buffer.putInt(numberOfPackets);
-                    buffer.putInt(1);
-                    buffer.putInt(i);
-
-                    DatagramPacket request = new DatagramPacket(
-                            buffer.array(),
-                            buffer.position(),
-                            address
-                    );
-
-                    socket.send(request);
+                if (numberOfPackets == -1) {
+                    numberOfPackets = numOfPackets;
+                } else if (numberOfPackets != numOfPackets) {
+                    continue;
                 }
+
+                if (buffer.getInt() != 0) {
+                    continue;
+                }
+
+                int index = buffer.getInt();
+
+                byte[] payload = new byte[buffer.remaining()];
+                buffer.get(payload);
+
+                packets.put(index, payload);
+
+                // ACK для полученного пакета
+                ByteBuffer ack = ByteBuffer.allocate(
+                        Long.BYTES * 2 + Integer.BYTES * 3
+                );
+
+                ack.putLong(uuid.getMostSignificantBits());
+                ack.putLong(uuid.getLeastSignificantBits());
+                ack.putInt(numberOfPackets);
+                ack.putInt(1);
+                ack.putInt(index);
+
+                DatagramPacket ackPacket = new DatagramPacket(
+                        ack.array(),
+                        ack.position(),
+                        address
+                );
+
+                socket.send(ackPacket);
+
+            } catch (SocketTimeoutException ignored) {
             }
         }
 
