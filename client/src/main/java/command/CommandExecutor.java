@@ -1,9 +1,6 @@
 package command;
 
-import command.concrete.ExitCommand;
-import command.concrete.HelpCommand;
-import command.concrete.InsertCommand;
-import command.concrete.PortCommand;
+import command.concrete.*;
 import language.Lexer;
 import net.Handler;
 import org.jline.terminal.Terminal;
@@ -38,6 +35,7 @@ public class CommandExecutor {
             case PORT -> new PortCommand().execute(statuses, handler, compiled, terminal);
             case HELP -> new HelpCommand().execute(statuses, handler, compiled, terminal);
             case INSERT -> new InsertCommand().execute(statuses, handler, compiled, terminal);
+            case SHOW -> new ShowCommand().execute(statuses, handler, compiled, terminal);
         }
     }
 }

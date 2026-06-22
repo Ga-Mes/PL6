@@ -55,8 +55,6 @@ public class InsertCommand extends AbstractClientCommand {
 
                     context.status = RequestStatus.FINISHED;
 
-                    logger.info(String.valueOf(collectionManager.dragons));
-
                     return new Response(1, "Added dragon to the collection...");
                 }
             }

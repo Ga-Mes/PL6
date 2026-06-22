@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JacksonException;
 import command.AbstractClientCommand;
 import command.client.HelpCommand;
 import command.client.InsertCommand;
+import command.client.ShowCommand;
 import data.CollectionManager;
 import data.XMLWorker;
 import org.slf4j.Logger;
@@ -83,7 +84,7 @@ public class Handler {
                         AbstractClientCommand command = switch (request.type()) {
                             case HELP -> new HelpCommand();
                             case INFO -> null;
-                            case SHOW -> null;
+                            case SHOW -> new ShowCommand();
                             case INSERT -> new InsertCommand();
                             case UPDATE -> null;
                             case REMOVE_KEY -> null;
