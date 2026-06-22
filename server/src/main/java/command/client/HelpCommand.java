@@ -2,6 +2,7 @@ package command.client;
 
 import command.AbstractClientCommand;
 import data.CollectionManager;
+import language.Lexer;
 import net.Request;
 import net.RequestContext;
 import net.RequestStatus;
@@ -13,10 +14,10 @@ public class HelpCommand extends AbstractClientCommand {
     public Response execute(boolean[] statuses, Logger logger, CollectionManager collectionManager, RequestContext context, Request request) {
         Response response;
 
-        if (request.items().isEmpty()) {
+        if (Lexer.transform(request) != null) {
             response = new Response(1, "List of commands...");
         } else {
-            response = new Response(2, "Wrong number of arguments...");
+            response = new Response(2, "Wrong primitive arguments...");
         }
 
         context.status = RequestStatus.FINISHED;
