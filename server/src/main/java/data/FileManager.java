@@ -1,5 +1,6 @@
 package data;
 
+import base.Dragon;
 import org.slf4j.Logger;
 
 import java.util.TreeMap;
@@ -11,7 +12,7 @@ public class FileManager {
         this.logger = logger;
     }
 
-    public void load(TreeMap<Integer, Object> dragons) {
+    public void load(TreeMap<Integer, Dragon> dragons) {
         logger.info("Loading collection...");
     }
 

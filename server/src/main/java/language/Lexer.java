@@ -1,6 +1,7 @@
 package language;
 
 import command.CommandType;
+import net.Request;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Type;
@@ -87,6 +88,30 @@ public class Lexer {
         }
 
         return tokens;
+    }
+
+    public static ArrayList<Object> transform(Request request) {
+        CommandType type = request.type();
+
+        if (serverCommands.contains(type)) return null;
+
+        ArrayList<Object> result = new ArrayList<>();
+
+        for (int i = 0; i < request.items().size(); i++) {
+            Object arg = request.items().get(i);
+
+            if (defaultArgs.get(type)[i] == Integer.class) {
+                try {
+                    arg = Integer.parseInt((String) arg);
+                } catch (NumberFormatException e) {
+                    return null;
+                }
+            }
+
+            result.add(arg);
+        }
+
+        return result;
     }
 
     public static ArrayList<Object> compile(String input, Logger logger) {

@@ -3,6 +3,7 @@ package net;
 import com.fasterxml.jackson.core.JacksonException;
 import command.AbstractClientCommand;
 import command.client.HelpCommand;
+import command.client.InsertCommand;
 import data.CollectionManager;
 import data.XMLWorker;
 import org.slf4j.Logger;
@@ -83,7 +84,7 @@ public class Handler {
                             case HELP -> new HelpCommand();
                             case INFO -> null;
                             case SHOW -> null;
-                            case INSERT -> null;
+                            case INSERT -> new InsertCommand();
                             case UPDATE -> null;
                             case REMOVE_KEY -> null;
                             case CLEAR -> null;

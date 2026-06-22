@@ -1,11 +1,12 @@
 package data;
 
+import base.Dragon;
 import org.slf4j.Logger;
 
 import java.util.TreeMap;
 
 public class CollectionManager {
-    private final TreeMap<Integer, Object> dragons = new TreeMap<>();
+    public final TreeMap<Integer, Dragon> dragons = new TreeMap<>();
 
     private final FileManager fileManager;
 
