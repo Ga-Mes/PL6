@@ -94,7 +94,7 @@ public class Handler {
                             case REMOVE_GREATER_KEY -> null;
                             case FILTER_CONTAINS_DESCRIPTION -> new FilterContainsDescription();
                             case FILTER_GREATER_THAN_AGE -> new FilterGreaterThanAgeCommand();
-                            case PRINT_UNIQUE_COLOR -> null;
+                            case PRINT_UNIQUE_COLOR -> new PrintUniqueColorCommand();
                             case SAVE -> new SaveCommand();
                         };
 
