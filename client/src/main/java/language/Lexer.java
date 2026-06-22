@@ -15,7 +15,6 @@ public class Lexer {
             Map.entry(CommandType.UPDATE, new Type[]{Integer.class, String.class, Integer.class, String.class}),
             Map.entry(CommandType.REMOVE_KEY, new Type[]{Integer.class}),
             Map.entry(CommandType.CLEAR, new Type[]{}),
-            Map.entry(CommandType.EXECUTE_SCRIPT, new Type[]{String.class}),
             Map.entry(CommandType.EXIT, new Type[]{}),
             Map.entry(CommandType.REMOVE_GREATER, new Type[]{String.class, Integer.class, String.class}),
             Map.entry(CommandType.REPLACE_IF_GREATER, new Type[]{Integer.class, String.class, Integer.class, String.class}),

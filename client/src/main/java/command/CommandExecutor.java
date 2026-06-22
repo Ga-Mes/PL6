@@ -42,6 +42,7 @@ public class CommandExecutor {
             case FILTER_GREATER_THAN_AGE -> new FilterGreaterThanAgeCommand().execute(statuses, handler, compiled, terminal);
             case FILTER_CONTAINS_DESCRIPTION -> new FilterContainsDescription().execute(statuses, handler, compiled, terminal);
             case PRINT_UNIQUE_COLOR -> new PrintUniqueColorCommand().execute(statuses, handler, compiled, terminal);
+            case UPDATE -> new UpdateCommand().execute(statuses, handler, compiled, terminal);
         }
     }
 }
