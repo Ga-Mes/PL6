@@ -13,8 +13,8 @@ public class CollectionManager {
 
     private final FileManager fileManager;
 
-    public CollectionManager(Logger logger) {
-        fileManager = new FileManager(logger);
+    public CollectionManager(Logger logger, String fileName) throws Exception {
+        fileManager = new FileManager(logger, fileName);
 
         fileManager.load(dragons);
     }

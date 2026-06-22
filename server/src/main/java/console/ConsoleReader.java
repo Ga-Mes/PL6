@@ -27,12 +27,12 @@ public class ConsoleReader {
 
     private final Logger logger = LoggerFactory.getLogger(ConsoleReader.class);
 
-    public ConsoleReader() throws Exception {
+    public ConsoleReader(String fileName) throws Exception {
         terminal = TerminalBuilder.builder().system(true).jna(true).jansi(true).build();
 
         terminal.enterRawMode();
 
-        executor = new CommandExecutor(statuses, terminal, logger);
+        executor = new CommandExecutor(statuses, terminal, logger, fileName);
 
         logger.info("Starting...");
     }

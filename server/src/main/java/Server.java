@@ -9,9 +9,15 @@ import static console.ConsoleReader.renderMessage;
 public class Server {
     public static void main(String[] args) {
         try {
-            ConsoleReader reader = new ConsoleReader();
+            if (args.length != 0) {
+                ConsoleReader reader = new ConsoleReader(args[0]);
 
-            reader.start();
+                reader.start();
+            } else {
+                System.out.println("Couldn't start app because file name was not provided...");
+
+                throw new Exception();
+            }
         } catch (IOException e) {
             System.out.println("Couldn't start app because of console error...");
         } catch (Exception ignored) {}

@@ -21,7 +21,7 @@ public class CommandExecutor {
 
     private final CollectionManager collectionManager;
 
-    public CommandExecutor(boolean[] statuses, Terminal terminal, Logger logger) throws Exception {
+    public CommandExecutor(boolean[] statuses, Terminal terminal, Logger logger, String fileName) throws Exception {
         this.statuses = statuses;
         this.terminal = terminal;
         this.logger = logger;
@@ -32,7 +32,7 @@ public class CommandExecutor {
             throw new Exception();
         }
 
-        collectionManager = new CollectionManager(logger);
+        collectionManager = new CollectionManager(logger, fileName);
     }
 
     public void execute(String input) {
