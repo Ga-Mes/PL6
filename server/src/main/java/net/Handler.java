@@ -100,6 +100,10 @@ public class Handler {
                     Response response = contexts.get(uuid).handle(statuses, logger, collectionManager, request);
 
                     logger.info(String.valueOf(response));
+
+                    if (contexts.get(uuid).status == RequestStatus.FINISHED) {
+                        contexts.remove(uuid);
+                    }
                 }
 
                 ByteBuffer aBuffer = ByteBuffer.allocate(Long.BYTES * 2 + Integer.BYTES * 3);
