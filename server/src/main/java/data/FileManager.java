@@ -35,7 +35,11 @@ public class FileManager {
 
         if (Files.exists(path)) {
             try {
-                result = XMLWorker.parse(Files.readString(path), DragonWrapper.class).collection;
+                String line = Files.readString(path);
+
+                if (!line.isBlank()) {
+                    result = XMLWorker.parse(line, DragonWrapper.class).toTreeMap();
+                }
             } catch (IOException e) {
                 logger.error("Couldn't load collection. It will be empty...");
             }
