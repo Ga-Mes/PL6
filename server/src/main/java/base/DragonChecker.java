@@ -7,7 +7,7 @@ import org.jline.terminal.Terminal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class DragonCreator {
+public class DragonChecker {
     public static DragonTemplate create(Terminal terminal) {
         LineReader reader = LineReaderBuilder.builder().terminal(terminal).build();
 
@@ -157,22 +157,16 @@ public class DragonCreator {
     }
 
     public static boolean check(ArrayList<Object> primitives, int i) {
+        if (primitives.size() - i != 3) return false;
+
         String name = (String) primitives.get(i++);
 
         if (name.isBlank()) {
-            System.out.println("Name cannot be blank...");
-
             return false;
         }
 
-        Integer age = (Integer) primitives.get(i);
+        int age = Integer.parseInt((String) primitives.get(i));
 
-        if (age < 1) {
-            System.out.println("Age must be more than 0...");
-
-            return false;
-        }
-
-        return true;
+        return age >= 1;
     }
 }
