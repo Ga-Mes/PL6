@@ -53,6 +53,6 @@ public class CommandExecutor {
     }
 
     public void tick() {
-        // TODO: handle net
+        handler.tick(statuses, logger, collectionManager);
     }
 }
