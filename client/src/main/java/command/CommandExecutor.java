@@ -36,6 +36,7 @@ public class CommandExecutor {
             case HELP -> new HelpCommand().execute(statuses, handler, compiled, terminal);
             case INSERT -> new InsertCommand().execute(statuses, handler, compiled, terminal);
             case SHOW -> new ShowCommand().execute(statuses, handler, compiled, terminal);
+            case CLEAR -> new ClearCommand().execute(statuses, handler, compiled, terminal);
         }
     }
 }
