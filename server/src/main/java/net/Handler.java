@@ -1,13 +1,19 @@
 package net;
 
 import data.CollectionManager;
+import data.XMLWorker;
 import org.slf4j.Logger;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 public class Handler {
@@ -20,6 +26,8 @@ public class Handler {
     public Handler(Logger logger) {
         this.logger = logger;
     }
+
+    private final Map<UUID, TreeMap<Integer, byte[]>> toAssemble = new HashMap<>();
 
     public void tick(boolean[] statuses, Logger logger, CollectionManager collectionManager) {
         ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE * 2);
@@ -40,6 +48,43 @@ public class Handler {
             int index = buffer.getInt();
 
             logger.info("{} {} {} {}", uuid, numberOfPackets, type, index);
+
+            if (type == 0) {
+                toAssemble.putIfAbsent(uuid, new TreeMap<>());
+
+                byte[] data = new byte[buffer.remaining()];
+
+                buffer.get(data);
+
+                toAssemble.get(uuid).put(index, data);
+
+                if (numberOfPackets == toAssemble.get(uuid).size()) {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+                    for (byte[] bytes : toAssemble.get(uuid).values()) {
+                        out.write(bytes);
+                    }
+
+                    Request request = XMLWorker.parse(
+                            out.toString(StandardCharsets.UTF_8),
+                            Request.class
+                    );
+
+                    logger.info(String.valueOf(request));
+                }
+
+                ByteBuffer aBuffer = ByteBuffer.allocate(Long.BYTES * 2 + Integer.BYTES * 3);
+
+                aBuffer.putLong(uuid.getMostSignificantBits());
+                aBuffer.putLong(uuid.getLeastSignificantBits());
+                aBuffer.putInt(numberOfPackets);
+                aBuffer.putInt(1);
+                aBuffer.putInt(index);
+
+                aBuffer.rewind();
+
+                channel.send(aBuffer, address);
+            }
         } catch (IOException ignored) {}
     }
 
