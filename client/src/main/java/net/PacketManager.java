@@ -93,18 +93,31 @@ public class PacketManager {
 
         int numberOfPackets = -1;
 
-        while (packets.isEmpty() || packets.size() != numberOfPackets) {
+        int retries = 10;
+
+        while ((packets.isEmpty() || packets.size() != numberOfPackets)
+                && retries > 0) {
             try {
                 DatagramPacket packet =
-                        new DatagramPacket(new byte[BUFFER_SIZE * 2], BUFFER_SIZE * 2);
+                        new DatagramPacket(
+                                new byte[BUFFER_SIZE * 2],
+                                BUFFER_SIZE * 2
+                        );
 
                 socket.receive(packet);
 
                 ByteBuffer buffer =
-                        ByteBuffer.wrap(packet.getData(), 0, packet.getLength());
+                        ByteBuffer.wrap(
+                                packet.getData(),
+                                0,
+                                packet.getLength()
+                        );
 
                 UUID packetUuid =
-                        new UUID(buffer.getLong(), buffer.getLong());
+                        new UUID(
+                                buffer.getLong(),
+                                buffer.getLong()
+                        );
 
                 if (!packetUuid.equals(uuid)) {
                     continue;
@@ -129,7 +142,6 @@ public class PacketManager {
 
                 packets.put(index, payload);
 
-                // ACK для полученного пакета
                 ByteBuffer ack = ByteBuffer.allocate(
                         Long.BYTES * 2 + Integer.BYTES * 3
                 );
@@ -148,8 +160,17 @@ public class PacketManager {
 
                 socket.send(ackPacket);
 
+                retries = 10;
+
             } catch (SocketTimeoutException ignored) {
+                retries--;
             }
+        }
+
+        if (packets.isEmpty()
+                || numberOfPackets == -1
+                || packets.size() != numberOfPackets) {
+            throw new IOException("Response timeout...");
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
