@@ -24,7 +24,7 @@ public class ShowCommand extends AbstractClientCommand {
                 pieces.add(dragon.toString());
             }
 
-            response = new Response(1, String.join(" ", pieces));
+            response = new Response(1, String.join("\n", pieces));
         } else {
             response = new Response(2, "Wrong primitive arguments...");
         }
