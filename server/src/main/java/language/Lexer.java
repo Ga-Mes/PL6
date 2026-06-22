@@ -95,6 +95,8 @@ public class Lexer {
 
         if (serverCommands.contains(type)) return null;
 
+        if (request.items().size() != defaultArgs.get(type).length) return null;
+
         ArrayList<Object> result = new ArrayList<>();
 
         for (int i = 0; i < request.items().size(); i++) {
