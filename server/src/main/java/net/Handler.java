@@ -81,7 +81,7 @@ public class Handler {
                     if (!contexts.containsKey(uuid)) {
                         AbstractClientCommand command = switch (request.type()) {
                             case HELP -> new HelpCommand();
-                            case INFO -> null;
+                            case INFO -> new InfoCommand();
                             case SHOW -> new ShowCommand();
                             case INSERT -> new InsertCommand();
                             case UPDATE -> null;
