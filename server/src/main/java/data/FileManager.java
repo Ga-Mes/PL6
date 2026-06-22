@@ -1,8 +1,11 @@
 package data;
 
 import base.Dragon;
+import base.DragonWrapper;
+import com.fasterxml.jackson.core.JacksonException;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.TreeMap;
@@ -10,11 +13,10 @@ import java.util.TreeMap;
 public class FileManager {
     private final Logger logger;
 
-    private final String fileName;
+    private final Path path;
 
     public FileManager(Logger logger, String fileName) throws Exception {
         this.logger = logger;
-        this.fileName = fileName;
 
         Path path = Path.of(fileName);
 
@@ -23,10 +25,24 @@ public class FileManager {
 
             throw new Exception();
         }
+
+        this.path = path;
     }
 
-    public void load(TreeMap<Integer, Dragon> dragons) {
+    public TreeMap<Integer, Dragon> load() {
         logger.info("Loading collection...");
+
+        TreeMap<Integer, Dragon> result = new TreeMap<>();
+
+        if (Files.exists(path)) {
+            try {
+                result = XMLWorker.parse(Files.readString(path), DragonWrapper.class).collection;
+            } catch (IOException e) {
+                logger.error("Couldn't load collection. It will be empty...");
+            }
+        }
+
+        return result;
     }
 
     public void save() {

@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.TreeMap;
 
 public class CollectionManager {
-    public final TreeMap<Integer, Dragon> dragons = new TreeMap<>();
+    public final TreeMap<Integer, Dragon> dragons;
 
     private final Date initDate = new Date();
 
@@ -16,7 +16,7 @@ public class CollectionManager {
     public CollectionManager(Logger logger, String fileName) throws Exception {
         fileManager = new FileManager(logger, fileName);
 
-        fileManager.load(dragons);
+        dragons = fileManager.load();
     }
 
     public void save() {
