@@ -40,6 +40,7 @@ public class CommandExecutor {
             case INFO -> new InfoCommand().execute(statuses, handler, compiled, terminal);
             case REMOVE_KEY -> new RemoveKeyCommand().execute(statuses, handler, compiled, terminal);
             case FILTER_GREATER_THAN_AGE -> new FilterGreaterThanAgeCommand().execute(statuses, handler, compiled, terminal);
+            case FILTER_CONTAINS_DESCRIPTION -> new FilterContainsDescription().execute(statuses, handler, compiled, terminal);
         }
     }
 }
