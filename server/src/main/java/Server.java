@@ -2,8 +2,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import console.ConsoleReader;
 import console.LogBuffer;
 
-import java.io.IOException;
-
 import static console.ConsoleReader.renderMessage;
 
 public class Server {
@@ -18,8 +16,6 @@ public class Server {
 
                 throw new Exception();
             }
-        } catch (IOException e) {
-            System.out.println("Couldn't start app because of console error...");
         } catch (Exception ignored) {}
 
         ILoggingEvent event;
