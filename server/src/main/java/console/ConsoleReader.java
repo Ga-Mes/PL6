@@ -37,7 +37,7 @@ public class ConsoleReader {
 
         terminal.enterRawMode();
 
-        executor = new CommandExecutor(statuses, terminal, logger, fileName);
+        executor = new CommandExecutor(statuses, logger, fileName);
 
         logger.info("Starting...");
     }
