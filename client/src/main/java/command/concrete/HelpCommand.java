@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class HelpCommand extends AbstractCommand {
     @Override
     public void execute(boolean[] statuses, Handler handler, ArrayList<Object> args, Terminal terminal) {
-        Request request = new Request(CommandType.HELP, new ArrayList<>());
+        Request request = new Request(CommandType.HELP, new ArrayList<>(), handler.login, handler.password);
 
         String response = handler.process(request, terminal);
 

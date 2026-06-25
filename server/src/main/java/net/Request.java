@@ -4,5 +4,5 @@ import command.CommandType;
 
 import java.util.ArrayList;
 
-public record Request(CommandType type, ArrayList<Object> items) {
+public record Request(CommandType type, ArrayList<Object> items, String login, String password) {
 }

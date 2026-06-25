@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class PrintUniqueColorCommand extends AbstractCommand {
     @Override
     public void execute(boolean[] statuses, Handler handler, ArrayList<Object> args, Terminal terminal) {
-        Request request = new Request(CommandType.PRINT_UNIQUE_COLOR, new ArrayList<>());
+        Request request = new Request(CommandType.PRINT_UNIQUE_COLOR, new ArrayList<>(), handler.login, handler.password);
 
         String response = handler.process(request, terminal);
 

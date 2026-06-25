@@ -13,7 +13,7 @@ public class RemoveGreaterCommand extends AbstractCommand {
     @Override
     public void execute(boolean[] statuses, Handler handler, ArrayList<Object> args, Terminal terminal) {
         if (DragonCreator.check(args, 0)) {
-            Request request = new Request(CommandType.REMOVE_GREATER, args);
+            Request request = new Request(CommandType.REMOVE_GREATER, args, handler.login, handler.password);
 
             String response = handler.process(request, terminal);
 

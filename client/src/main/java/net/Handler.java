@@ -13,6 +13,10 @@ import java.util.UUID;
 public class Handler {
     private final PacketManager manager = new PacketManager();
 
+    public String login = "";
+
+    public String password = "";
+
     public void setPort(int port) {
         try {
             manager.setNet(port);
@@ -41,7 +45,7 @@ public class Handler {
 
                     args.add(template);
 
-                    request = new Request(request.type(), args);
+                    request = new Request(request.type(), args, login, password);
                 } else {
                     return response.text();
                 }

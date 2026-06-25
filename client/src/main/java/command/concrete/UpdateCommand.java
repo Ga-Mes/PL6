@@ -13,7 +13,7 @@ public class UpdateCommand extends AbstractCommand {
     @Override
     public void execute(boolean[] statuses, Handler handler, ArrayList<Object> args, Terminal terminal) {
         if (DragonCreator.check(args, 1)) {
-            Request request = new Request(CommandType.UPDATE, args);
+            Request request = new Request(CommandType.UPDATE, args, handler.login, handler.password);
 
             String response = handler.process(request, terminal);
 
