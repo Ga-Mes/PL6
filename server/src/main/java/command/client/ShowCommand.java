@@ -20,7 +20,7 @@ public class ShowCommand extends AbstractClientCommand {
         if (Lexer.transform(request) != null) {
             ArrayList<String> pieces = new ArrayList<>();
 
-            for (Dragon dragon : collectionManager.dragons.values()) {
+            for (Dragon dragon : collectionManager.getCollectionSnapshot().values()) {
                 pieces.add(dragon.toString());
             }
 

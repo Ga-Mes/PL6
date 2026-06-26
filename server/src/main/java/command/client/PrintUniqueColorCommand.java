@@ -20,7 +20,7 @@ public class PrintUniqueColorCommand extends AbstractClientCommand {
         if (Lexer.transform(request) != null) {
             ArrayList<String> pieces = new ArrayList<>();
 
-            for (Dragon dragon : collectionManager.dragons.values()) {
+            for (Dragon dragon : collectionManager.getCollectionSnapshot().values()) {
                 if (dragon.getColor() != null) {
                     pieces.add(dragon.getId() + " - " + dragon.getColor().hashCode());
                 }

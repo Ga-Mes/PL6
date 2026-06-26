@@ -48,8 +48,24 @@ public class CollectionManager {
         return success;
     }
 
+    public TreeMap<Integer, Dragon> getCollectionSnapshot() {
+        lock.readLock().lock();
+
+        try {
+            return new TreeMap<>(dragons);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
     @Override
     public String toString() {
-        return "Initialized: " + initDate + "\n" + "Type: " + Dragon.class + "\n" + "Count: " + dragons.size();
+        lock.readLock().lock();
+
+        try {
+            return "Initialized: " + initDate + "\n" + "Type: " + Dragon.class + "\n" + "Count: " + dragons.size();
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 }

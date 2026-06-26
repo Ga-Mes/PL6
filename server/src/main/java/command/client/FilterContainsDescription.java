@@ -24,7 +24,7 @@ public class FilterContainsDescription extends AbstractClientCommand {
         if ((primitives = Lexer.transform(request)) != null) {
             String description = (String) primitives.get(0);
 
-            Set<String> valid = collectionManager.dragons.values().stream().filter((dragon -> dragon.getDescription().contains(description))).map(Dragon::toString).collect(Collectors.toSet());
+            Set<String> valid = collectionManager.getCollectionSnapshot().values().stream().filter((dragon -> dragon.getDescription().contains(description))).map(Dragon::toString).collect(Collectors.toSet());
 
             response = new Response(1, String.join("\n", valid));
         } else {
