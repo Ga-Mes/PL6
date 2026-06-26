@@ -19,7 +19,6 @@ public class Lexer {
             Map.entry(CommandType.REMOVE_KEY, new Type[]{Integer.class}),
             Map.entry(CommandType.CLEAR, new Type[]{}),
             Map.entry(CommandType.EXIT, new Type[]{}),
-            Map.entry(CommandType.REMOVE_GREATER, new Type[]{String.class, Integer.class, String.class}),
             Map.entry(CommandType.REMOVE_GREATER_KEY, new Type[]{Integer.class}),
             Map.entry(CommandType.FILTER_CONTAINS_DESCRIPTION, new Type[]{String.class}),
             Map.entry(CommandType.FILTER_GREATER_THAN_AGE, new Type[]{Integer.class}),

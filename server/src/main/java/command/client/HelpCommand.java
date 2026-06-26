@@ -24,7 +24,8 @@ public class HelpCommand extends AbstractClientCommand {
                 remove_key key - remove an element from the collection by its key.
                 clear - clear the collection.
                 exit - terminate the program.
-                remove_greater name age description - remove all elements from the collection that are greater than the specified one.
+                register login password - register in system.
+                login login password - login in system.
                 remove_greater_key key - remove all elements from the collection whose key exceeds the specified one.
                 filter_contains_description description - display elements whose description field contains the given substring.
                 filter_greater_than_age age - display elements whose age field is greater than the specified value.

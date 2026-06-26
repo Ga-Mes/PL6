@@ -43,7 +43,6 @@ public class CommandExecutor {
             case FILTER_CONTAINS_DESCRIPTION -> new FilterContainsDescription().execute(statuses, handler, compiled, terminal);
             case PRINT_UNIQUE_COLOR -> new PrintUniqueColorCommand().execute(statuses, handler, compiled, terminal);
             case UPDATE -> new UpdateCommand().execute(statuses, handler, compiled, terminal);
-            case REMOVE_GREATER -> new RemoveGreaterCommand().execute(statuses, handler, compiled, terminal);
             case REMOVE_GREATER_KEY -> new RemoveGreaterKeyCommand().execute(statuses, handler, compiled, terminal);
             case REGISTER -> new RegisterCommand().execute(statuses, handler, compiled, terminal);
             case LOGIN -> new LoginCommand().execute(statuses, handler, compiled, terminal);
