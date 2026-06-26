@@ -1,11 +1,13 @@
 package data;
 
+import base.*;
+import com.fasterxml.jackson.core.JacksonException;
 import org.slf4j.Logger;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class DatabaseManager {
     private final String url = "jdbc:postgresql://localhost:5432/studs";
@@ -30,12 +32,83 @@ public class DatabaseManager {
         logger.info("Connected to the database!");
 
         try {
-            PreparedStatement pS = connection.prepareStatement("CREATE TABLE IF NOT EXISTS users (login VARCHAR(255) PRIMARY KEY, password_hash CHAR(64) NOT NULL); CREATE TABLE IF NOT EXISTS dragons (c_id BIGSERIAL PRIMARY KEY, id INTEGER NOT NULL, owner_login VARCHAR(255) NOT NULL REFERENCES users(login), name VARCHAR(255) NOT NULL, coordinates JSONB, creation_date TIMESTAMP NOT NULL, age INTEGER, description TEXT, color VARCHAR(50), character VARCHAR(50), cave JSONB);");
+            PreparedStatement pS = connection.prepareStatement("CREATE TABLE IF NOT EXISTS USERS (login TEXT PRIMARY KEY, password_hash CHAR(64) NOT NULL); CREATE TABLE IF NOT EXISTS DRAGON (c_id SERIAL PRIMARY KEY, id SERIAL UNIQUE NOT NULL, owner_login TEXT NOT NULL REFERENCES USERS(login), name TEXT, coordinates XML, creation_date TIMESTAMP NOT NULL, age INTEGER, description TEXT, color TEXT, character TEXT, cave XML);");
 
             pS.execute();
         } catch (SQLException e) {
             logger.error("Couldn't create all tables. Program will abort...");
         }
+    }
+
+    public TreeMap<Integer, Dragon> load(Map<String, HashSet<Integer>> ownerships) {
+        ownerships.clear();
+
+        TreeMap<Integer, Dragon> result = new TreeMap<>();
+
+        String sql = "SELECT * FROM DRAGON ORDER BY c_id";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                int cId = rs.getInt("c_id");
+                String owner = rs.getString("owner_login");
+
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+
+                String coordinatesXml = rs.getString("coordinates");
+                Coordinates coordinates = coordinatesXml == null
+                        ? null
+                        : XMLWorker.parse(coordinatesXml, Coordinates.class);
+
+                String caveXml = rs.getString("cave");
+                DragonCave cave = caveXml == null
+                        ? null
+                        : XMLWorker.parse(caveXml, DragonCave.class);
+
+                Date creationDate = new Date(rs.getTimestamp("creation_date").getTime());
+
+                Integer age = (Integer) rs.getObject("age");
+
+                String description = rs.getString("description");
+
+                String colorStr = rs.getString("color");
+                Color color = colorStr == null
+                        ? null
+                        : Color.valueOf(colorStr);
+
+                String characterStr = rs.getString("character");
+                DragonCharacter character = characterStr == null
+                        ? null
+                        : DragonCharacter.valueOf(characterStr);
+
+                result.put(
+                        cId,
+                        new Dragon(
+                                id,
+                                name,
+                                coordinates,
+                                creationDate,
+                                age,
+                                description,
+                                color,
+                                character,
+                                cave
+                        )
+                );
+
+                ownerships.computeIfAbsent(owner, k -> new HashSet<>()).add(cId);
+            }
+
+        } catch (SQLException | JacksonException e) {
+            logger.error("Couldn't load the collection. It will be empty...", e);
+
+            ownerships.clear();
+            return new TreeMap<>();
+        }
+
+        return result;
     }
 
     private boolean connect() {

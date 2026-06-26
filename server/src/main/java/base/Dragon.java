@@ -59,6 +59,18 @@ public class Dragon implements Comparable<Dragon> {
         creationDate = new Date();
     }
 
+    public Dragon(Integer id, String name, Coordinates coordinates, Date creationDate, Integer age, String description, Color color, DragonCharacter character, DragonCave cave) {
+        this.id = id;
+        this.name = name;
+        this.coordinates = coordinates;
+        this.creationDate = creationDate;
+        this.age = age;
+        this.description = description;
+        this.color = color;
+        this.character = character;
+        this.cave = cave;
+    }
+
     public Dragon() {}
 
     public void exchange(Dragon o) {

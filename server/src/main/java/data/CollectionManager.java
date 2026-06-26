@@ -3,24 +3,21 @@ package data;
 import base.Dragon;
 import org.slf4j.Logger;
 
-import java.util.Date;
-import java.util.TreeMap;
+import java.util.*;
 
 public class CollectionManager {
     public final TreeMap<Integer, Dragon> dragons;
 
     private final Date initDate = new Date();
 
-    private final FileManager fileManager;
-
     private final DatabaseManager databaseManager;
 
-    public CollectionManager(Logger logger, String fileName) throws Exception {
-        fileManager = new FileManager(logger, fileName);
+    private Map<String, HashSet<Integer>> ownerships = new HashMap<>();
 
-        dragons = fileManager.load();
-
+    public CollectionManager(Logger logger) throws Exception {
         databaseManager = new DatabaseManager(logger);
+
+        dragons = databaseManager.load(ownerships);
     }
 
     public void save() {
