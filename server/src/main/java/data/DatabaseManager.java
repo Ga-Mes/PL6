@@ -8,9 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
-import java.util.HashSet;
 import java.util.HexFormat;
-import java.util.Map;
 import java.util.TreeMap;
 
 public class DatabaseManager {
@@ -94,9 +92,7 @@ public class DatabaseManager {
         }
     }
 
-    public TreeMap<Integer, Dragon> load(Map<String, HashSet<Integer>> ownerships) {
-        ownerships.clear();
-
+    public TreeMap<Integer, Dragon> load() {
         TreeMap<Integer, Dragon> result = new TreeMap<>();
 
         String sql = "SELECT * FROM DRAGON ORDER BY c_id";
@@ -106,7 +102,6 @@ public class DatabaseManager {
 
             while (rs.next()) {
                 int cId = rs.getInt("c_id");
-                String owner = rs.getString("owner_login");
 
                 int id = rs.getInt("id");
                 String name = rs.getString("name");
@@ -151,14 +146,11 @@ public class DatabaseManager {
                                 cave
                         )
                 );
-
-                ownerships.computeIfAbsent(owner, k -> new HashSet<>()).add(cId);
             }
 
         } catch (SQLException | JacksonException e) {
             logger.error("Couldn't load the collection. It will be empty...", e);
 
-            ownerships.clear();
             return new TreeMap<>();
         }
 

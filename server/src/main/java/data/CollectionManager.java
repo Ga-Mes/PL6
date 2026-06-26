@@ -16,12 +16,10 @@ public class CollectionManager {
 
     private final DatabaseManager databaseManager;
 
-    private final Map<String, HashSet<Integer>> ownerships = new HashMap<>();
-
     public CollectionManager(Logger logger) throws Exception {
         databaseManager = new DatabaseManager(logger);
 
-        dragons = databaseManager.load(ownerships);
+        dragons = databaseManager.load();
     }
 
     public void save() {
@@ -29,17 +27,7 @@ public class CollectionManager {
     }
 
     public boolean register(String login, String password) {
-        if (!databaseManager.register(login, password)) return false;
-
-        lock.writeLock().lock();
-
-        try {
-            ownerships.put(login, new HashSet<>());
-        } finally {
-            lock.writeLock().unlock();
-        }
-
-        return true;
+        return databaseManager.register(login, password);
     }
 
     public boolean authorize(String login, String password) {
