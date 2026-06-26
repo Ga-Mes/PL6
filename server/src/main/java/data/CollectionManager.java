@@ -76,6 +76,20 @@ public class CollectionManager {
         return success;
     }
 
+    public boolean update(Integer id, Dragon dragon, String login) {
+        boolean success;
+
+        lock.writeLock().lock();
+
+        try {
+            success = databaseManager.update(id, dragon, login, dragons);
+        } finally {
+            lock.writeLock().unlock();
+        }
+
+        return success;
+    }
+
     public TreeMap<Integer, Dragon> getCollectionSnapshot() {
         lock.readLock().lock();
 

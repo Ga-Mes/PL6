@@ -9,6 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.HexFormat;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class DatabaseManager {
@@ -110,6 +111,84 @@ public class DatabaseManager {
 
             return true;
         } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    public boolean update(Integer id, Dragon dragon, String login, TreeMap<Integer, Dragon> dragons) {
+        String sql = """
+            UPDATE DRAGON
+            SET
+                name = ?,
+                coordinates = ?::xml,
+                creation_date = ?,
+                age = ?,
+                description = ?,
+                color = ?,
+                character = ?,
+                cave = ?::xml
+            WHERE id = ? AND owner_login = ?
+            """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, dragon.getName());
+
+            ps.setString(
+                    2,
+                    dragon.getCoordinates() == null
+                            ? null
+                            : XMLWorker.serialize(dragon.getCoordinates())
+            );
+
+            ps.setTimestamp(
+                    3,
+                    new Timestamp(dragon.getCreationDate().getTime())
+            );
+
+            ps.setObject(4, dragon.getAge());
+            ps.setString(5, dragon.getDescription());
+
+            ps.setString(
+                    6,
+                    dragon.getColor() == null
+                            ? null
+                            : dragon.getColor().name()
+            );
+
+            ps.setString(
+                    7,
+                    dragon.getCharacter() == null
+                            ? null
+                            : dragon.getCharacter().name()
+            );
+
+            ps.setString(
+                    8,
+                    dragon.getCave() == null
+                            ? null
+                            : XMLWorker.serialize(dragon.getCave())
+            );
+
+            ps.setInt(9, id);
+            ps.setString(10, login);
+
+            int updated = ps.executeUpdate();
+
+            if (updated > 0) {
+                for (Dragon cDragon : dragons.values()) {
+                    if (Objects.equals(cDragon.getId(), id)) {
+                        cDragon.exchange(dragon);
+                        break;
+                    }
+                }
+
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (SQLException | JacksonException e) {
             return false;
         }
     }

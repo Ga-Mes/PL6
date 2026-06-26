@@ -15,7 +15,6 @@ import net.Response;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 enum UpdateCommandStatus {
     START, PENDING_DRAGON
@@ -52,17 +51,13 @@ public class UpdateCommand extends AbstractClientCommand {
 
                     Dragon dragon = DragonChecker.form(template, primitives, 1);
 
-                    for (Dragon cDragon : collectionManager.dragons.values()) {
-                        if (Objects.equals(cDragon.getId(), id)) {
-                            cDragon.exchange(dragon);
-
-                            break;
-                        }
-                    }
-
                     context.status = RequestStatus.FINISHED;
 
-                    return new Response(1, "Updated dragon in the collection...");
+                    if (collectionManager.update(id, dragon, request.login())) {
+                        return new Response(1, "Updated dragon in the collection...");
+                    } else {
+                        return new Response(1, "Couldn't update dragon in the collection...");
+                    }
                 }
             }
         } catch (Exception e) {
