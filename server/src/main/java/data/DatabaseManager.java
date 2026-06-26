@@ -14,9 +14,9 @@ import java.util.TreeMap;
 public class DatabaseManager {
     private final String url = "jdbc:postgresql://localhost:5432/studs";
 
-    private final String login = "s505345";
+    private final String bUser = "s505345";
 
-    private final String secret = "70ddjuMWzRju6JfQ";
+    private final String bSecret = "70ddjuMWzRju6JfQ";
 
     private Connection connection;
 
@@ -159,7 +159,7 @@ public class DatabaseManager {
 
     private boolean connect() {
         try {
-            connection = DriverManager.getConnection(url, login, secret);
+            connection = DriverManager.getConnection(url, bUser, bSecret);
         } catch (SQLException e) {
             return false;
         }
