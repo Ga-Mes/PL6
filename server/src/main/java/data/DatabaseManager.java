@@ -4,8 +4,12 @@ import base.*;
 import com.fasterxml.jackson.core.JacksonException;
 import org.slf4j.Logger;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.HashSet;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -38,6 +42,35 @@ public class DatabaseManager {
         } catch (SQLException e) {
             logger.error("Couldn't create all tables. Program will abort...");
         }
+    }
+
+    public boolean register(String login, String password) {
+        try {
+            PreparedStatement pS = connection.prepareStatement("INSERT INTO USERS(login, password_hash) VALUES (?, ?)");
+
+            pS.setString(1, login);
+            pS.setString(2, sha256(password));
+
+            pS.executeUpdate();
+
+            return true;
+        } catch (SQLException | NoSuchAlgorithmException e) {
+            return false;
+        }
+    }
+
+    private String sha256(String value) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+        byte[] hash = digest.digest(value.getBytes(StandardCharsets.UTF_8));
+
+        return HexFormat.of().formatHex(hash);
+    }
+
+    public void close() {
+        try {
+            connection.close();
+        } catch (SQLException ignored) {}
     }
 
     public TreeMap<Integer, Dragon> load(Map<String, HashSet<Integer>> ownerships) {

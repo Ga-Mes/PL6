@@ -21,7 +21,8 @@ public class Lexer {
             Map.entry(CommandType.FILTER_CONTAINS_DESCRIPTION, new Type[]{String.class}),
             Map.entry(CommandType.FILTER_GREATER_THAN_AGE, new Type[]{Integer.class}),
             Map.entry(CommandType.PRINT_UNIQUE_COLOR, new Type[]{}),
-            Map.entry(CommandType.PORT, new Type[]{Integer.class})
+            Map.entry(CommandType.PORT, new Type[]{Integer.class}),
+            Map.entry(CommandType.REGISTER, new Type[]{String.class, String.class})
     );
 
     private static ArrayList<String> split(String text) {

@@ -167,6 +167,11 @@ public class Handler {
         }
     }
 
+    public void close() {
+        receivePool.shutdownNow();
+        processPool.shutdownNow();
+    }
+
     private void processRequest(Request request, UUID uuid, boolean[] statuses, Logger logger, CollectionManager collectionManager) {
         //TODO: Check credentials
 
@@ -191,6 +196,7 @@ public class Handler {
                     case FILTER_GREATER_THAN_AGE -> new FilterGreaterThanAgeCommand();
                     case PRINT_UNIQUE_COLOR -> new PrintUniqueColorCommand();
                     case SAVE -> new SaveCommand();
+                    case REGISTER -> new RegisterCommand();
                 };
 
                 contexts.put(uuid, new RequestContext(command));

@@ -43,8 +43,8 @@ public class CommandExecutor {
         compiled.remove(0);
 
         switch (type) {
-            case EXIT -> new ExitCommand().execute(statuses, compiled, logger, collectionManager);
-            case SAVE -> new SaveCommand().execute(statuses, compiled, logger, collectionManager);
+            case EXIT -> new ExitCommand().execute(statuses, compiled, logger, collectionManager, handler);
+            case SAVE -> new SaveCommand().execute(statuses, compiled, logger, collectionManager, handler);
         }
     }
 
