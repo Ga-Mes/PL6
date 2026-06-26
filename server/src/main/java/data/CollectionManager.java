@@ -13,14 +13,18 @@ public class CollectionManager {
 
     private final FileManager fileManager;
 
+    private final DatabaseManager databaseManager;
+
     public CollectionManager(Logger logger, String fileName) throws Exception {
         fileManager = new FileManager(logger, fileName);
 
         dragons = fileManager.load();
+
+        databaseManager = new DatabaseManager(logger);
     }
 
     public void save() {
-        fileManager.save(dragons);
+
     }
 
     @Override
