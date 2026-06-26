@@ -104,6 +104,26 @@ public class Dragon implements Comparable<Dragon> {
         return color;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public DragonCharacter getCharacter() {
+        return character;
+    }
+
+    public DragonCave getCave() {
+        return cave;
+    }
+
     @Override
     public String toString() {
         return "(Dragon)\n" +

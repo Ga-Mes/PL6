@@ -49,13 +49,15 @@ public class InsertCommand extends AbstractClientCommand {
 
                     DragonTemplate template = mapper.convertValue(request.items().get(0), DragonTemplate.class);
 
-                    Dragon dragon = DragonChecker.form(template, primitives, 1, collectionManager);
-
-                    collectionManager.dragons.put(id, dragon);
+                    Dragon dragon = DragonChecker.form(template, primitives, 1);
 
                     context.status = RequestStatus.FINISHED;
 
-                    return new Response(1, "Added dragon to the collection...");
+                    if (collectionManager.insert(id, request.login(), dragon)) {
+                        return new Response(1, "Added dragon to the collection...");
+                    } else {
+                        return new Response(2, "Couldn't add the dragon to the collection...");
+                    }
                 }
             }
         } catch (Exception e) {

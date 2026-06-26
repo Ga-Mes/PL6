@@ -34,7 +34,7 @@ public class DatabaseManager {
         logger.info("Connected to the database!");
 
         try {
-            PreparedStatement pS = connection.prepareStatement("CREATE TABLE IF NOT EXISTS USERS (login TEXT PRIMARY KEY, password_hash CHAR(64) NOT NULL); CREATE TABLE IF NOT EXISTS DRAGON (c_id SERIAL PRIMARY KEY, id SERIAL UNIQUE NOT NULL, owner_login TEXT NOT NULL REFERENCES USERS(login), name TEXT, coordinates XML, creation_date TIMESTAMP NOT NULL, age INTEGER, description TEXT, color TEXT, character TEXT, cave XML);");
+            PreparedStatement pS = connection.prepareStatement("CREATE TABLE IF NOT EXISTS USERS (login TEXT PRIMARY KEY, password_hash CHAR(64) NOT NULL); CREATE TABLE IF NOT EXISTS DRAGON (c_id INTEGER PRIMARY KEY, id SERIAL UNIQUE NOT NULL, owner_login TEXT NOT NULL REFERENCES USERS(login), name TEXT, coordinates XML, creation_date TIMESTAMP NOT NULL, age INTEGER, description TEXT, color TEXT, character TEXT, cave XML);");
 
             pS.execute();
         } catch (SQLException e) {
@@ -110,6 +110,80 @@ public class DatabaseManager {
 
             return true;
         } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    public boolean insert(Integer key, Dragon dragon, String login, TreeMap<Integer, Dragon> dragons) {
+        String sql = """
+            INSERT INTO DRAGON (
+                c_id,
+                owner_login,
+                name,
+                coordinates,
+                creation_date,
+                age,
+                description,
+                color,
+                character,
+                cave
+            )
+            VALUES (?, ?, ?, ?::xml, ?, ?, ?, ?, ?, ?::xml)
+            RETURNING id
+            """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, key);
+            ps.setString(2, login);
+            ps.setString(3, dragon.getName());
+
+            ps.setString(
+                    4,
+                    dragon.getCoordinates() == null
+                            ? null
+                            : XMLWorker.serialize(dragon.getCoordinates())
+            );
+
+            ps.setTimestamp(5, new Timestamp(dragon.getCreationDate().getTime()));
+            ps.setObject(6, dragon.getAge());
+            ps.setString(7, dragon.getDescription());
+
+            ps.setString(
+                    8,
+                    dragon.getColor() == null
+                            ? null
+                            : dragon.getColor().name()
+            );
+
+            ps.setString(
+                    9,
+                    dragon.getCharacter() == null
+                            ? null
+                            : dragon.getCharacter().name()
+            );
+
+            ps.setString(
+                    10,
+                    dragon.getCave() == null
+                            ? null
+                            : XMLWorker.serialize(dragon.getCave())
+            );
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return false;
+                }
+
+                dragon.setId(rs.getInt("id"));
+            }
+
+            dragons.put(key, dragon);
+
+            return true;
+
+        } catch (SQLException | JacksonException e) {
+            logger.error(e.getMessage());
+
             return false;
         }
     }

@@ -34,6 +34,20 @@ public class CollectionManager {
         return databaseManager.authorize(login, password);
     }
 
+    public boolean insert(Integer key, String login, Dragon dragon) {
+        boolean success;
+
+        lock.writeLock().lock();
+
+        try {
+            success = databaseManager.insert(key, dragon, login, dragons);
+        } finally {
+            lock.writeLock().unlock();
+        }
+
+        return success;
+    }
+
     public boolean clear(String login) {
         boolean success;
 

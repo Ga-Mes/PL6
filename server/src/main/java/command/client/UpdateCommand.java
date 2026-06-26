@@ -50,7 +50,7 @@ public class UpdateCommand extends AbstractClientCommand {
 
                     DragonTemplate template = mapper.convertValue(request.items().get(0), DragonTemplate.class);
 
-                    Dragon dragon = DragonChecker.form(template, primitives, 1, collectionManager);
+                    Dragon dragon = DragonChecker.form(template, primitives, 1);
 
                     for (Dragon cDragon : collectionManager.dragons.values()) {
                         if (Objects.equals(cDragon.getId(), id)) {

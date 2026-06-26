@@ -49,7 +49,7 @@ public class RemoveGreaterCommand extends AbstractClientCommand {
 
                     DragonTemplate template = mapper.convertValue(request.items().get(0), DragonTemplate.class);
 
-                    Dragon dragon = DragonChecker.form(template, primitives, 0, collectionManager);
+                    Dragon dragon = DragonChecker.form(template, primitives, 0);
 
                     Set<Integer> valid = collectionManager.dragons.keySet().stream().filter(integer -> dragon.compareTo(collectionManager.dragons.get(integer)) < 0).collect(Collectors.toSet());
 
