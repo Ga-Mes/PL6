@@ -26,7 +26,7 @@ public class ConsoleReader {
 
     private final Logger logger = LoggerFactory.getLogger(ConsoleReader.class);
 
-    public ConsoleReader(String fileName) throws Exception {
+    public ConsoleReader() throws Exception {
         try {
             terminal = TerminalBuilder.builder().system(true).build();
         } catch (IOException e) {

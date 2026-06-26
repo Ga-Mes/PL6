@@ -7,15 +7,9 @@ import static console.ConsoleReader.renderMessage;
 public class Server {
     public static void main(String[] args) {
         try {
-            if (args.length != 0) {
-                ConsoleReader reader = new ConsoleReader(args[0]);
+            ConsoleReader reader = new ConsoleReader();
 
-                reader.start();
-            } else {
-                System.out.println("Couldn't start app because file name was not provided...");
-
-                throw new Exception();
-            }
+            reader.start();
         } catch (Exception ignored) {}
 
         ILoggingEvent event;
