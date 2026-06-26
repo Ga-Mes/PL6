@@ -42,6 +42,10 @@ public class CollectionManager {
         return true;
     }
 
+    public boolean authorize(String login, String password) {
+        return databaseManager.authorize(login, password);
+    }
+
     @Override
     public String toString() {
         return "Initialized: " + initDate + "\n" + "Type: " + Dragon.class + "\n" + "Count: " + dragons.size();

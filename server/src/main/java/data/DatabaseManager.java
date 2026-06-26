@@ -73,6 +73,27 @@ public class DatabaseManager {
         } catch (SQLException ignored) {}
     }
 
+    public boolean authorize(String login, String password) {
+        String sql = "SELECT password_hash FROM USERS WHERE login = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, login);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return false;
+                }
+
+                String storedHash = rs.getString("password_hash");
+                String enteredHash = sha256(password);
+
+                return storedHash.equals(enteredHash);
+            }
+        } catch (SQLException | NoSuchAlgorithmException e) {
+            return false;
+        }
+    }
+
     public TreeMap<Integer, Dragon> load(Map<String, HashSet<Integer>> ownerships) {
         ownerships.clear();
 

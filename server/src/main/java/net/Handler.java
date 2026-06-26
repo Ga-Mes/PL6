@@ -2,6 +2,7 @@ package net;
 
 import com.fasterxml.jackson.core.JacksonException;
 import command.AbstractClientCommand;
+import command.CommandType;
 import command.client.*;
 import data.CollectionManager;
 import data.XMLWorker;
@@ -173,7 +174,11 @@ public class Handler {
     }
 
     private void processRequest(Request request, UUID uuid, boolean[] statuses, Logger logger, CollectionManager collectionManager) {
-        //TODO: Check credentials
+        if ((request.type() != CommandType.REGISTER) && !collectionManager.authorize(request.login(), request.password())) {
+            new Thread(() -> sendResponse(new Response(2, "Access denied..."), uuid)).start();
+
+            return;
+        }
 
         RequestContext context;
 

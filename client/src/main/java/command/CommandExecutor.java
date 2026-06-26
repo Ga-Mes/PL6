@@ -46,6 +46,7 @@ public class CommandExecutor {
             case REMOVE_GREATER -> new RemoveGreaterCommand().execute(statuses, handler, compiled, terminal);
             case REMOVE_GREATER_KEY -> new RemoveGreaterKeyCommand().execute(statuses, handler, compiled, terminal);
             case REGISTER -> new RegisterCommand().execute(statuses, handler, compiled, terminal);
+            case LOGIN -> new LoginCommand().execute(statuses, handler, compiled, terminal);
         }
     }
 }
