@@ -34,6 +34,20 @@ public class CollectionManager {
         return databaseManager.authorize(login, password);
     }
 
+    public boolean clear(String login) {
+        boolean success;
+
+        lock.writeLock().lock();
+
+        try {
+            success = databaseManager.clear(dragons, login);
+        } finally {
+            lock.writeLock().unlock();
+        }
+
+        return success;
+    }
+
     @Override
     public String toString() {
         return "Initialized: " + initDate + "\n" + "Type: " + Dragon.class + "\n" + "Count: " + dragons.size();

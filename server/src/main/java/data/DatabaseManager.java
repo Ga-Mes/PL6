@@ -92,6 +92,28 @@ public class DatabaseManager {
         }
     }
 
+    public boolean clear(TreeMap<Integer, Dragon> dragons, String login) {
+        try {
+            PreparedStatement ps = connection.prepareStatement(
+                    "DELETE FROM DRAGON WHERE owner_login = ? RETURNING c_id"
+            );
+
+            ps.setString(1, login);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int cId = rs.getInt("c_id");
+
+                    dragons.remove(cId);
+                }
+            }
+
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
     public TreeMap<Integer, Dragon> load() {
         TreeMap<Integer, Dragon> result = new TreeMap<>();
 

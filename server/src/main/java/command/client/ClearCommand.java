@@ -15,9 +15,11 @@ public class ClearCommand extends AbstractClientCommand {
         Response response;
 
         if (Lexer.transform(request) != null) {
-            collectionManager.dragons.clear();
-
-            response = new Response(1, "Cleared collection successfully!");
+            if (collectionManager.clear(request.login())) {
+                response = new Response(1, "Cleared collection successfully!");
+            } else {
+                response = new Response(2, "Couldn't clear the collection successfully...");
+            }
         } else {
             response = new Response(2, "Wrong primitive arguments...");
         }
