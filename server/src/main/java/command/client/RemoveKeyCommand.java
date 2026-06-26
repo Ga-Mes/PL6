@@ -20,11 +20,11 @@ public class RemoveKeyCommand extends AbstractClientCommand {
         ArrayList<Object> primitives;
 
         if ((primitives = Lexer.transform(request)) != null) {
-            Integer key = (Integer) primitives.get(0);
-
-            collectionManager.dragons.remove(key);
-
-            response = new Response(1, "Removed element...");
+            if (collectionManager.removeKey(request.login(), (Integer) primitives.get(0))) {
+                response = new Response(1, "Removed element...");
+            } else {
+                response = new Response(2, "Couldn't remove the element...");
+            }
         } else {
             response = new Response(2, "Wrong primitive arguments...");
         }

@@ -48,6 +48,20 @@ public class CollectionManager {
         return success;
     }
 
+    public boolean removeKey(String login, Integer key) {
+        boolean success;
+
+        lock.writeLock().lock();
+
+        try {
+            success = databaseManager.removeKey(dragons, login, key);
+        } finally {
+            lock.writeLock().unlock();
+        }
+
+        return success;
+    }
+
     public boolean clear(String login) {
         boolean success;
 

@@ -114,6 +114,33 @@ public class DatabaseManager {
         }
     }
 
+    public boolean removeKey(TreeMap<Integer, Dragon> dragons, String login, Integer key) {
+        String sql = """
+            DELETE FROM DRAGON
+            WHERE owner_login = ? AND c_id = ?
+            RETURNING c_id
+            """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, login);
+            ps.setInt(2, key);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return false;
+                }
+
+                int cId = rs.getInt("c_id");
+                dragons.remove(cId);
+
+                return true;
+            }
+
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
     public boolean insert(Integer key, Dragon dragon, String login, TreeMap<Integer, Dragon> dragons) {
         String sql = """
             INSERT INTO DRAGON (
